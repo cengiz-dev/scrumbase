@@ -14,4 +14,8 @@ export class FirebaseDataService extends DataService {
   getProjectsFromBackend(): Observable<any> {
     return this.db.list(Project.COLLECTION_NAME).valueChanges();
   }
+
+  addProjectToBackend(project: Project) {
+    this.db.list(Project.COLLECTION_NAME).push(project);
+  }
 }

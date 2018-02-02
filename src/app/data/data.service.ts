@@ -50,6 +50,12 @@ export abstract class DataService {
         return projects$;
     }
 
+    public addProject(project: Project) {
+        this.lastRefresh = 0;
+
+        this.addProjectToBackend(project);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -60,4 +66,6 @@ export abstract class DataService {
     }
 
     protected abstract getProjectsFromBackend(): Observable<any>;
+
+    protected abstract addProjectToBackend(project: Project);
 }

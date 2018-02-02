@@ -1,6 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MatToolbarModule, MatListModule, MatIconModule } from '@angular/material';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  MatToolbarModule,
+  MatListModule,
+  MatIconModule,
+  MatButtonModule,
+  MatExpansionModule,
+  MatInputModule,
+  MatFormFieldModule,
+} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -19,9 +29,15 @@ import { DataModule } from './data/data.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
+    FormsModule,
     MatIconModule,
     MatListModule,
     MatToolbarModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatInputModule,
+    MatFormFieldModule,
     DataModule,
   ],
   providers: [],

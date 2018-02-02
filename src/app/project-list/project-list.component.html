@@ -1,3 +1,39 @@
+<mat-expansion-panel
+    (opened)="createProjectPanelOpenState = true"
+    (closed)="createProjectPanelOpenState = false"
+    [expanded]="createProjectPanelOpenState">
+  <mat-expansion-panel-header>
+    Create Project
+  </mat-expansion-panel-header>
+  <mat-panel-description *ngIf="createProjectPanelOpenState">
+    Please fill out the project data and click the create button.
+  </mat-panel-description>
+
+  <form (ngSubmit)="onCreateProject(f)" #f="ngForm">
+    <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+      <input matInput required ngModel name="title">
+      <mat-placeholder>
+        <mat-icon>edit</mat-icon>
+        <b>Project Title</b>
+      </mat-placeholder>
+    </mat-form-field>
+
+    <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+      <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" ngModel name="summary"></textarea>
+      <mat-placeholder>
+        <mat-icon>edit</mat-icon>
+        <b>Project Summary</b>
+      </mat-placeholder>
+    </mat-form-field>
+
+    <mat-action-row>
+      <button mat-icon-button color="primary" title="create project" type="submit" [disabled]="!f.valid">
+        <mat-icon aria-label="Create project button">save</mat-icon>
+      </button>
+    </mat-action-row>
+  </form>
+</mat-expansion-panel>
+
 <mat-list>
   <h3 mat-subheader>Recent Projects</h3>
   <mat-list-item *ngFor="let p of (projects$ | async)">

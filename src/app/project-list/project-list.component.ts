@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+
 import { Project } from '../model/project';
 import { DataService } from '../data/data.service';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-project-list',
@@ -10,6 +12,9 @@ import { Observable } from 'rxjs/Observable';
 })
 export class ProjectListComponent implements OnInit {
   projects$: Observable<Project[]>;
+  createProjectPanelOpenState: boolean = false;
+
+  @ViewChild('expansionPanel') expansionPanelState: boolean;
 
   constructor(private dataService: DataService) { }
 
@@ -17,4 +22,10 @@ export class ProjectListComponent implements OnInit {
     this.projects$ = this.dataService.getProjects();
   }
 
+  onCreateProject(form: NgForm) {
+    const value = form.value;
+    this.dataService.addProject(new Project(value.title, value.summary));
+    form.resetForm();
+    this.createProjectPanelOpenState = false;
+  }
 }
