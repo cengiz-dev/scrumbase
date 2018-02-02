@@ -11,7 +11,7 @@ export class FirebaseDataService extends DataService {
     super();
   }
 
-  getProductsFromBackend(): Observable<any> {
+  getProjectsFromBackend(): Observable<any> {
     return this.db.list(Project.COLLECTION_NAME).valueChanges();
   }
 }

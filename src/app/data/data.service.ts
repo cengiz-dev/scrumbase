@@ -25,7 +25,7 @@ export abstract class DataService {
     lastRefresh: number;
     @Inject(PLATFORM_ID) private platformId: Object;
 
-    public getProducts(refresh?: boolean): Observable<any> {
+    public getProjects(refresh?: boolean): Observable<any> {
         let products$: Observable<Project[]>;
 
         if (isPlatformBrowser(this.platformId) && !(refresh && this.allowRefresh())) {
@@ -39,7 +39,7 @@ export abstract class DataService {
         }
 
         if (!products$) {
-            products$ = this.getProductsFromBackend();
+            products$ = this.getProjectsFromBackend();
             if (isPlatformBrowser(this.platformId)) {
                 products$.take(1).subscribe((backendData: Project[]) => {
                     let localData = new LocalData<Project[]>(new Date().getTime(), backendData);
@@ -59,5 +59,5 @@ export abstract class DataService {
         return allow;
     }
 
-    protected abstract getProductsFromBackend(): Observable<any>;
+    protected abstract getProjectsFromBackend(): Observable<any>;
 }
