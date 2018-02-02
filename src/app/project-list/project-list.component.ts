@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 
@@ -13,8 +13,6 @@ import { DataService } from '../data/data.service';
 export class ProjectListComponent implements OnInit {
   projects$: Observable<Project[]>;
   createProjectPanelOpenState: boolean = false;
-
-  @ViewChild('expansionPanel') expansionPanelState: boolean;
 
   constructor(private dataService: DataService) { }
 
