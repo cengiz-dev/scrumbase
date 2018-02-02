@@ -4,7 +4,7 @@ ScrumBase is a Scrum tool written with Angular.
 ## Firebase
 If you plan on using Firebase, then you'll need to create an `environment.firebase.ts` file in the `src/app/environments` directory that contains Firebase configuration information as follows:
 
-`
+```javascript
 export const firebaseEnvironment = {
     apiKey: '****',
     authDomain: '****.firebaseapp.com',
@@ -13,8 +13,7 @@ export const firebaseEnvironment = {
     storageBucket: '****.appspot.com',
     messagingSenderId: '************'
 };
-`
-
+```
 
 # Help on Angular
 
