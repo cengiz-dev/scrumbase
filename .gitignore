@@ -1,3 +1,6 @@
+# Firebase API configuration including API key
+environment.firebase.ts
+
 .DS_STORE
 
 /dist/
