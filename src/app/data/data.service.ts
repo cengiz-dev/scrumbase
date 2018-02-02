@@ -26,28 +26,28 @@ export abstract class DataService {
     @Inject(PLATFORM_ID) private platformId: Object;
 
     public getProjects(refresh?: boolean): Observable<any> {
-        let products$: Observable<Project[]>;
+        let projects$: Observable<Project[]>;
 
         if (isPlatformBrowser(this.platformId) && !(refresh && this.allowRefresh())) {
-            let productsString: string = localStorage.getItem(Project.COLLECTION_NAME);
-            if (productsString) {
-                let localData = LocalData.fromString(productsString);
+            let projectsString: string = localStorage.getItem(Project.COLLECTION_NAME);
+            if (projectsString) {
+                let localData = LocalData.fromString(projectsString);
                 if (!localData.isStale()) {
-                    products$ = Observable.from([localData.data]);
+                    projects$ = Observable.from([localData.data]);
                 }
             }
         }
 
-        if (!products$) {
-            products$ = this.getProjectsFromBackend();
+        if (!projects$) {
+            projects$ = this.getProjectsFromBackend();
             if (isPlatformBrowser(this.platformId)) {
-                products$.take(1).subscribe((backendData: Project[]) => {
+                projects$.take(1).subscribe((backendData: Project[]) => {
                     let localData = new LocalData<Project[]>(new Date().getTime(), backendData);
                     localStorage.setItem(Project.COLLECTION_NAME, JSON.stringify(localData));
                 });
             }
         }
-        return products$;
+        return projects$;
     }
 
     private allowRefresh() {

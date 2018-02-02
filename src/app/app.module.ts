@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { ProjectListComponent } from './project-list/project-list.component';
+import { DataModule } from './data/data.module';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ProjectListComponent } from './project-list/project-list.component';
     MatIconModule,
     MatListModule,
     MatToolbarModule,
+    DataModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
