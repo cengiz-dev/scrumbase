@@ -18,6 +18,8 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { ProjectListComponent } from './project-list/project-list.component';
 import { DataModule } from './data/data.module';
+import { ProjectDetailsComponent } from './project-details/project-details.component';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
@@ -25,6 +27,8 @@ import { DataModule } from './data/data.module';
     AppComponent,
     HeaderComponent,
     ProjectListComponent,
+    ProjectDetailsComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

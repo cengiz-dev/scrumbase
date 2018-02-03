@@ -36,7 +36,7 @@
 
 <mat-list>
   <h3 mat-subheader>Recent Projects</h3>
-  <mat-list-item *ngFor="let p of (projects$ | async)">
+  <mat-list-item *ngFor="let p of (projects$ | async)" (click)="onProjectSelected(p)">
     <mat-icon mat-list-icon>folder</mat-icon>
     <h4 mat-line>Title: {{p.title}}</h4>
     <p mat-line> Summary: {{p.summary}} </p>
