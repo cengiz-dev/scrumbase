@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
+import { State } from '../store/app.reducers';
+import * as ProjectsActions from '../store/app.actions';
 import { Project } from '../model/project';
-import { DataService } from '../data/data.service';
 
 @Component({
   selector: 'app-project-list',
@@ -15,15 +17,16 @@ export class ProjectListComponent implements OnInit {
   projects$: Observable<Project[]>;
   createProjectPanelOpenState: boolean = false;
 
-  constructor(private dataService: DataService, private router: Router) { }
+  constructor(private store: Store<State>, private router: Router) { }
 
   ngOnInit() {
-    this.projects$ = this.dataService.getProjects();
+    this.store.dispatch(new ProjectsActions.GetProjects());
+    this.projects$ = this.store.pipe(select('projects'));
   }
 
   onCreateProject(form: NgForm) {
     const value = form.value;
-    this.dataService.addProject(new Project(value.title, value.summary));
+    this.store.dispatch(new ProjectsActions.CreateProject(new Project(value.title, value.summary)));
     form.resetForm();
     this.createProjectPanelOpenState = false;
   }
