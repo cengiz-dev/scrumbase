@@ -6,6 +6,7 @@ export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
   GET_PROJECTS = 'GET_PROJECTS',
   CREATE_PROJECT = 'CREATE_PROJECT',
+  SELECT_PROJECT = 'SELECT_PROJECT',
 }
 
 export class SetProjects implements Action {
@@ -26,7 +27,14 @@ export class CreateProject implements Action {
   constructor(public payload: Project) {}
 }
 
+export class SelectProject implements Action {
+  readonly type = ProjectsActionType.SELECT_PROJECT;
+
+  constructor(public payload: number) {}
+}
+
 export type AllProjectsActions =
   GetProjects |
   SetProjects |
-  CreateProject;
+  CreateProject |
+  SelectProject;

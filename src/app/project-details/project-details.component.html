@@ -1,3 +1,7 @@
-<p>
-  project-details works!
+<p *ngIf="(state$ | async) as viewState">
+
+  title: <span>{{ viewState.projects[(params$ | async)['index']]?.title }}</span>
+   
+  <br>
+  summary: <span>{{ viewState.projects[(params$ | async)['index']]?.summary }}</span>
 </p>

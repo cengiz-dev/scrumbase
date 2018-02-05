@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { DataService } from '../data/data.service';
 import { GetProjects, CreateProject, ProjectsActionType } from './app.actions';
-import { State } from './app.reducers';
+import { AppState } from './app.reducers';
 
 @Injectable()
 export class ProjectsEffects {
@@ -27,5 +27,5 @@ export class ProjectsEffects {
   constructor(
     private actions$: Actions,
     private dataService: DataService,
-    private store: Store<State>) { }
+    private store: Store<AppState>) { }
 }

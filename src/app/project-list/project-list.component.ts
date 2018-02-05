@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { State } from '../store/app.reducers';
+import { AppState, ProjectsState } from '../store/app.reducers';
 import * as ProjectsActions from '../store/app.actions';
 import { Project } from '../model/project';
 
@@ -14,14 +14,14 @@ import { Project } from '../model/project';
   styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent implements OnInit {
-  projects$: Observable<Project[]>;
+  state$: Observable<ProjectsState>;
   createProjectPanelOpenState: boolean = false;
 
-  constructor(private store: Store<State>, private router: Router) { }
+  constructor(private store: Store<AppState>, private router: Router) { }
 
   ngOnInit() {
     this.store.dispatch(new ProjectsActions.GetProjects());
-    this.projects$ = this.store.pipe(select('projects'));
+    this.state$ = this.store.pipe(select('projects'));
   }
 
   onCreateProject(form: NgForm) {
@@ -31,7 +31,8 @@ export class ProjectListComponent implements OnInit {
     this.createProjectPanelOpenState = false;
   }
 
-  onProjectSelected(project: Project) {
-    this.router.navigate(['project', project.title]);
+  onProjectSelected(index: number) {
+    this.store.dispatch(new ProjectsActions.SelectProject(index));
+    this.router.navigate(['project', index]);
   }
 }
