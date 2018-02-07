@@ -5,7 +5,7 @@ import 'rxjs/add/operator/take';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Project } from '../model/project';
+import { Project, ProjectRef } from '../model/project';
 import { config } from './data.config';
 
 class LocalData<T> {
@@ -25,11 +25,11 @@ export abstract class DataService {
     lastRefresh: number;
     @Inject(PLATFORM_ID) private platformId: Object;
 
-    public getProjects(refresh?: boolean): Observable<any> {
-        let projects$: Observable<Project[]>;
+    public getProjects(refresh?: boolean): Observable<ProjectRef[]> {
+        let projects$: Observable<ProjectRef[]>;
 
         if (isPlatformBrowser(this.platformId) && !(refresh && this.allowRefresh())) {
-            let projectsString: string = localStorage.getItem(Project.COLLECTION_NAME);
+            let projectsString: string = localStorage.getItem(ProjectRef.COLLECTION_NAME);
             if (projectsString) {
                 let localData = LocalData.fromString(projectsString);
                 if (!localData.isStale()) {
@@ -41,9 +41,9 @@ export abstract class DataService {
         if (!projects$) {
             projects$ = this.getProjectsFromBackend();
             if (isPlatformBrowser(this.platformId)) {
-                projects$.take(1).subscribe((backendData: Project[]) => {
-                    let localData = new LocalData<Project[]>(new Date().getTime(), backendData);
-                    localStorage.setItem(Project.COLLECTION_NAME, JSON.stringify(localData));
+                projects$.take(1).subscribe((backendData: ProjectRef[]) => {
+                    let localData = new LocalData<ProjectRef[]>(new Date().getTime(), backendData);
+                    localStorage.setItem(ProjectRef.COLLECTION_NAME, JSON.stringify(localData));
                 });
             }
         }
@@ -54,6 +54,12 @@ export abstract class DataService {
         this.lastRefresh = 0;
 
         this.addProjectToBackend(project);
+    }
+
+    public updateProject(project: ProjectRef) {
+        this.lastRefresh = 0;
+
+        this.updateProjectInBackend(project);
     }
 
     private allowRefresh() {
@@ -68,4 +74,6 @@ export abstract class DataService {
     protected abstract getProjectsFromBackend(): Observable<any>;
 
     protected abstract addProjectToBackend(project: Project);
+
+    protected abstract updateProjectInBackend(project: ProjectRef);
 }

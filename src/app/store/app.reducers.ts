@@ -6,6 +6,7 @@ import { ProjectsActionType, AllProjectsActions } from './app.actions';
 export interface ProjectsState {
   projects: Project[],
   currentProjectIndex: number,
+  editMode: boolean,
 }
 
 export interface AppState {
@@ -19,6 +20,7 @@ export const reducers: ActionReducerMap<AppState, AllProjectsActions> = {
 const initialState: ProjectsState = {
   projects: [],
   currentProjectIndex: undefined,
+  editMode: false,
 };
 
 export function projectsReducer(state = initialState, action: AllProjectsActions): ProjectsState {
@@ -37,6 +39,21 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
       return {
         ...state,
         currentProjectIndex: action.payload,
+      };
+    case ProjectsActionType.EDIT_PROJECT:
+      return {
+        ...state,
+        editMode: true,
+      };
+    case ProjectsActionType.SAVE_PROJECT:
+      return {
+        ...state,
+        editMode: false,
+      };
+    case ProjectsActionType.CANCEL_EDIT:
+      return {
+        ...state,
+        editMode: false,
       };
     default:
       return state;
