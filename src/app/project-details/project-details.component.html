@@ -2,33 +2,27 @@
   <form *ngIf="(index$ | async) as i" (ngSubmit)="onSaveProject(f, viewState.projects[i])" #f="ngForm">
     <mat-form-field *ngIf="viewState.editMode;else viewModeTitleContent">
       <mat-label>title</mat-label>
-      <input
-        matInput
-        required
-        name="title"
-        placeholder="title"
-        [ngModel]="viewState.projects[i]?.title">
+      <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.title">
     </mat-form-field>
     <ng-template #viewModeTitleContent>
-      title:
-      <span>{{ viewState.projects[i]?.title }}</span>
+      <div class="data-line">
+        <span class="data data-label">title:</span>
+        &nbsp;
+        <span class="data data-value">{{ viewState.projects[i]?.title }}</span>
+      </div>
     </ng-template>
 
     <mat-form-field *ngIf="viewState.editMode;else viewModeSummaryContent">
       <mat-label>summary</mat-label>
-      <textarea
-        matInput
-        required
-        name="summary"
-        matTextareaAutosize
-        matAutosizeMinRows="1"
-        matAutosizeMaxRows="5"
-        placeholder="summary"
+      <textarea matInput required name="summary" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="summary"
         [ngModel]="viewState.projects[i]?.summary"></textarea>
     </mat-form-field>
     <ng-template #viewModeSummaryContent>
-      summary:
-      <span>{{ viewState.projects[i]?.summary }}</span>
+      <div class="data-line">
+        <span class="data data-label">summary:</span>
+        &nbsp;
+        <span class="data data-value">{{ viewState.projects[i]?.summary }}</span>
+      </div>
     </ng-template>
 
     <div *ngIf="viewState.editMode;else viewModeButtons">
