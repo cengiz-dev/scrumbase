@@ -14,6 +14,7 @@ import {
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -40,11 +41,14 @@ import { environment } from '../environments/environment';
     BrowserModule,
     AppRoutingModule,
     StoreModule.forRoot({ projects: projectsReducer }),
+    EffectsModule.forRoot([ProjectsEffects]),
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router' // name of reducer key
+    }),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production // Restrict extension to log-only mode
     }),
-    EffectsModule.forRoot([ProjectsEffects]),
     BrowserAnimationsModule,
     FormsModule,
     MatIconModule,
