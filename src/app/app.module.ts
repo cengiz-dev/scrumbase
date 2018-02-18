@@ -24,7 +24,8 @@ import { ProjectListComponent } from './project-list/project-list.component';
 import { DataModule } from './data/data.module';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { HomeComponent } from './home/home.component';
-import { reducers, CustomSerializer } from './store/app.reducers';
+import { reducers } from './store/app.reducers';
+import { CustomSerializer } from './store/app.state';
 import { ProjectsEffects } from './store/app.effects';
 import { environment } from '../environments/environment';
 

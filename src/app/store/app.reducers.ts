@@ -1,26 +1,9 @@
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Params } from '@angular/router';
-import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
-import { routerReducer, RouterAction, RouterReducerState, RouterStateSerializer } from '@ngrx/router-store';
+import { ActionReducerMap } from '@ngrx/store';
+import { routerReducer, RouterAction } from '@ngrx/router-store';
 
 import { Project } from '../model/project';
 import { ProjectsActionType, AllProjectsActions } from './app.actions';
-
-export interface RouterStateUrl {
-  url: string;
-  queryParams: Params;
-  params: Params;
-}
-
-export interface ProjectsState {
-  projects: Project[],
-  currentProject: Project,
-  editMode: boolean,
-}
-
-export interface AppState {
-  router: RouterReducerState<RouterStateUrl>,
-  projects: ProjectsState,
-}
+import { AppState, ProjectsState, RouterStateUrl } from './app.state';
 
 export const reducers: ActionReducerMap<AppState, AllProjectsActions | RouterAction<any, RouterStateUrl>> = {
   router: routerReducer,
@@ -29,7 +12,6 @@ export const reducers: ActionReducerMap<AppState, AllProjectsActions | RouterAct
 
 const initialState: ProjectsState = {
   projects: [],
-  currentProject: undefined,
   editMode: false,
 };
 
@@ -62,19 +44,5 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
       };
     default:
       return state;
-  }
-}
-
-export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
-  serialize(routerState: RouterStateSnapshot): RouterStateUrl {
-    const { url } = routerState;
-    const { queryParams } = routerState.root;
-    let state: ActivatedRouteSnapshot = routerState.root;
-    while(state.firstChild) {
-      state = state.firstChild;
-    }
-    const { params } = state;
-
-    return { url, queryParams, params};
   }
 }

@@ -1,7 +1,7 @@
 import { createSelector, createFeatureSelector } from "@ngrx/store";
 import { RouterReducerState } from '@ngrx/router-store';
 
-import { RouterStateUrl, ProjectsState } from "./app.reducers";
+import { RouterStateUrl, ProjectsState } from "./app.state";
 import { Project } from "../model/project";
 
 export const getRouterState =
@@ -12,7 +12,7 @@ export const getProjectsState =
 
 export const getProjects = createSelector(
     getProjectsState,
-    (state: ProjectsState) => state.projects
+    (state: ProjectsState) => state.projects,
 );
 
 export const getSelectedProject = createSelector(

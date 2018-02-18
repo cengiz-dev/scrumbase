@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs/Observable';
 
-import { AppState } from '../store/app.reducers';
+import { AppState } from '../store/app.state';
 import { Project } from '../model/project';
 import { getSelectedProject } from '../store/app.selectors';
 
@@ -20,5 +20,4 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

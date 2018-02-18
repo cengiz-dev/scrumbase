@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
-import { AppState, ProjectsState } from '../store/app.reducers';
+import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { Project } from '../model/project';
 

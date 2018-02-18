@@ -3,7 +3,6 @@ import { Action } from '@ngrx/store';
 import { Project, ProjectRef } from '../model/project';
 
 export enum ProjectsActionType {
-  ROUTER_NAVIGATION = 'ROUTER_NAVIGATION',
   SET_PROJECTS = 'SET_PROJECTS',
   GET_PROJECTS = 'GET_PROJECTS',
   CREATE_PROJECT = 'CREATE_PROJECT',
