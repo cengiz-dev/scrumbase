@@ -32,7 +32,6 @@ export class ProjectListComponent implements OnInit {
   }
 
   onProjectSelected(index: number) {
-    this.store.dispatch(new ProjectsActions.SelectProject(index));
     this.router.navigate(['project', index]);
   }
 }

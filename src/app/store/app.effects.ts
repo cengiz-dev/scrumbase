@@ -24,13 +24,13 @@ export class ProjectsEffects {
       return Observable.of(new GetProjects());
     });
 
-    @Effect()
-    updateProject = this.actions$
-      .ofType(ProjectsActionType.SAVE_PROJECT)
-      .switchMap((action: SaveProject) => {
-        this.dataService.updateProject(action.payload);
-        return Observable.of(new GetProjects());
-      });
+  @Effect()
+  updateProject = this.actions$
+    .ofType(ProjectsActionType.SAVE_PROJECT)
+    .switchMap((action: SaveProject) => {
+      this.dataService.updateProject(action.payload);
+      return Observable.of(new GetProjects());
+    });
 
   constructor(
     private actions$: Actions,

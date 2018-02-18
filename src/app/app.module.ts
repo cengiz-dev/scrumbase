@@ -14,7 +14,7 @@ import {
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
-import { StoreRouterConnectingModule, routerReducer } from '@ngrx/router-store';
+import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -24,7 +24,7 @@ import { ProjectListComponent } from './project-list/project-list.component';
 import { DataModule } from './data/data.module';
 import { ProjectDetailsComponent } from './project-details/project-details.component';
 import { HomeComponent } from './home/home.component';
-import { projectsReducer } from './store/app.reducers';
+import { reducers, CustomSerializer } from './store/app.reducers';
 import { ProjectsEffects } from './store/app.effects';
 import { environment } from '../environments/environment';
 
@@ -40,7 +40,7 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({ projects: projectsReducer }),
+    StoreModule.forRoot(reducers),
     EffectsModule.forRoot([ProjectsEffects]),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router' // name of reducer key
@@ -60,7 +60,7 @@ import { environment } from '../environments/environment';
     MatFormFieldModule,
     DataModule,
   ],
-  providers: [],
+  providers: [ { provide: RouterStateSerializer, useClass: CustomSerializer }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,10 +3,10 @@ import { Action } from '@ngrx/store';
 import { Project, ProjectRef } from '../model/project';
 
 export enum ProjectsActionType {
+  ROUTER_NAVIGATION = 'ROUTER_NAVIGATION',
   SET_PROJECTS = 'SET_PROJECTS',
   GET_PROJECTS = 'GET_PROJECTS',
   CREATE_PROJECT = 'CREATE_PROJECT',
-  SELECT_PROJECT = 'SELECT_PROJECT',
   EDIT_PROJECT = 'EDIT_PROJECT',
   SAVE_PROJECT = 'SAVE_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT'
@@ -28,12 +28,6 @@ export class CreateProject implements Action {
   readonly type = ProjectsActionType.CREATE_PROJECT;
 
   constructor(public payload: Project) {}
-}
-
-export class SelectProject implements Action {
-  readonly type = ProjectsActionType.SELECT_PROJECT;
-
-  constructor(public payload: number) {}
 }
 
 export class EditProject implements Action {
@@ -58,7 +52,6 @@ export type AllProjectsActions =
   GetProjects |
   SetProjects |
   CreateProject |
-  SelectProject |
   EditProject |
   SaveProject |
   CancelEdit;
