@@ -1,6 +1,6 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Params } from '@angular/router';
 import { ActionReducerMap, createFeatureSelector } from '@ngrx/store';
-import { routerReducer, RouterReducerState, RouterAction, RouterStateSerializer } from '@ngrx/router-store';
+import { routerReducer, RouterAction, RouterReducerState, RouterStateSerializer } from '@ngrx/router-store';
 
 import { Project } from '../model/project';
 import { ProjectsActionType, AllProjectsActions } from './app.actions';
@@ -64,9 +64,6 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
       return state;
   }
 }
-
-export const getRouterState =
-  createFeatureSelector<RouterReducerState<RouterStateUrl>>('router');
 
 export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
   serialize(routerState: RouterStateSnapshot): RouterStateUrl {
