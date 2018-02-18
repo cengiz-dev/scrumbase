@@ -1,6 +1,9 @@
 # Scrumbase
 ScrumBase is a Scrum tool written with Angular.
 
+## Demo
+Follow [this link](https://stackblitz.com/github/cengiz-dev/scrumbase) in order to view the demo running on StackBlitz.
+
 ## Firebase
 If you plan on using Firebase, then you'll need to create an `environment.firebase.ts` file in the `src/app/environments` directory that contains Firebase configuration information as follows:
 
