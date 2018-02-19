@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { Project, ProjectRef } from '../model/project';
+import { Project, ProjectRef } from '../model/project.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',

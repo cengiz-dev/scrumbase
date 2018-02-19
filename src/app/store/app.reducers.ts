@@ -1,7 +1,7 @@
 import { ActionReducerMap } from '@ngrx/store';
 import { routerReducer, RouterAction } from '@ngrx/router-store';
 
-import { Project } from '../model/project';
+import { Project } from '../model/project.model';
 import { ProjectsActionType, AllProjectsActions } from './app.actions';
 import { AppState, ProjectsState, RouterStateUrl } from './app.state';
 

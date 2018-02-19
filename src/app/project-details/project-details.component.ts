@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
-import { ProjectRef } from '../model/project';
+import { ProjectRef } from '../model/project.model';
 
 @Component({
   selector: 'app-project-details',

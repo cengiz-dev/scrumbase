@@ -5,7 +5,7 @@ import 'rxjs/add/operator/take';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Project, ProjectRef } from '../model/project';
+import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';
 
 class LocalData<T> {

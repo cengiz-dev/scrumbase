@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
-import { Project } from '../model/project';
+import { Project } from '../model/project.model';
 
 @Component({
   selector: 'app-project-list',

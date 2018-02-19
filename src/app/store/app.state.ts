@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Params } from '@angular/router';
 import { RouterReducerState, RouterStateSerializer } from '@ngrx/router-store';
 
-import { Project } from '../model/project';
+import { Project } from '../model/project.model';
 
 export interface RouterStateUrl {
     url: string;

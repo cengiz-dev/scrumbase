@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { AppState } from '../store/app.state';
-import { Project } from '../model/project';
+import { Project } from '../model/project.model';
 import { getSelectedProject } from '../store/app.selectors';
 
 @Component({
