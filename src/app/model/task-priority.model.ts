@@ -1,8 +1,21 @@
-export enum TaskPriority {
-    SET_PROJECTS = 'SET_PROJECTS',
-    GET_PROJECTS = 'GET_PROJECTS',
-    CREATE_PROJECT = 'CREATE_PROJECT',
-    EDIT_PROJECT = 'EDIT_PROJECT',
-    SAVE_PROJECT = 'SAVE_PROJECT',
-    CANCEL_EDIT = 'CANCEL_EDIT'
+export enum TaskPriorityMoscow {
+    MUST_DO = 'MUST_DO',
+    SHOULD_DO = 'SHOULD_DO',
+    CAN_DO = 'CAN_DO',
+    WONT_DO = 'WONT_DO',
 }
+
+export enum TaskPrioritySeverity {
+    CRITICAL = 'CRITICAL',
+    IMPORTANT = 'IMPORTANT',
+    NORMAL = 'NORMAL',
+    MINOR = 'MINOR',
+}
+
+export enum TaskPriorityLevel {
+    HIGH = 'HIGH',
+    MEDIUM = 'MEDIUM',
+    LOW = 'LOW',
+}
+
+export type TaskPriority = TaskPriorityMoscow | TaskPriorityLevel | TaskPrioritySeverity;
