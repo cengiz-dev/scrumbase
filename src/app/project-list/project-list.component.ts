@@ -27,7 +27,9 @@ export class ProjectListComponent implements OnInit {
 
   onCreateProject(form: NgForm) {
     const value = form.value;
-    this.store.dispatch(new ProjectsActions.CreateProject(new Project(value.title, value.summary)));
+    let createdProject = new Project(value.title);
+    createdProject.description = value.description;
+    this.store.dispatch(new ProjectsActions.CreateProject(createdProject));
     form.resetForm();
     this.createProjectPanelOpenState = false;
   }

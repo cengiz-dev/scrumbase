@@ -19,10 +19,10 @@
     </mat-form-field>
 
     <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
-      <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" ngModel name="summary"></textarea>
+      <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" ngModel name="description"></textarea>
       <mat-placeholder>
         <mat-icon>edit</mat-icon>
-        <b>Project Summary</b>
+        <b>Project Description</b>
       </mat-placeholder>
     </mat-form-field>
 
@@ -39,6 +39,6 @@
   <mat-list-item *ngFor="let p of (allProjects$ | async); let i = index" (click)="onProjectSelected(i)">
     <mat-icon mat-list-icon>folder</mat-icon>
     <h4 mat-line>Title: {{p.title}}</h4>
-    <p mat-line> Summary: {{p.summary}} </p>
+    <p mat-line> Description: {{p.description}} </p>
   </mat-list-item>
 </mat-list>

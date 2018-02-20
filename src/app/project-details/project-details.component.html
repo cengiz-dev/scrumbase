@@ -13,15 +13,15 @@
     </ng-template>
 
     <mat-form-field *ngIf="viewState.editMode;else viewModeSummaryContent">
-      <mat-label>summary</mat-label>
-      <textarea matInput required name="summary" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="summary"
-        [ngModel]="viewState.projects[i]?.summary"></textarea>
+      <mat-label>description</mat-label>
+      <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+        [ngModel]="viewState.projects[i]?.description"></textarea>
     </mat-form-field>
     <ng-template #viewModeSummaryContent>
       <div class="data-line">
-        <span class="data data-label">summary:</span>
+        <span class="data data-label">description:</span>
         &nbsp;
-        <span class="data data-value">{{ viewState.projects[i]?.summary }}</span>
+        <span class="data data-value">{{ viewState.projects[i]?.description }}</span>
       </div>
     </ng-template>
 
