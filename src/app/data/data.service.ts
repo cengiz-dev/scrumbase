@@ -1,9 +1,8 @@
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/take';
-
-import { Observable } from 'rxjs/Observable';
 
 import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';

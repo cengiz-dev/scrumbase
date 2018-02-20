@@ -7,7 +7,12 @@
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
-  <span>Right Aligned Text</span>
+  <span>
+    <a mat-button *ngIf="!(user$ | async)" (click)="onLogin()">login</a>
+  <span *ngIf="(user$ | async) as user">{{user.displayName}} |
+    <a mat-button (click)="onLogout()">logout</a>
+  </span>
+  </span>
 </mat-toolbar>
 <mat-toolbar color="accent" *ngIf="(selectedProject$ | async) as selectedProject">
   <a mat-button routerLink="/">sprints</a>

@@ -28,7 +28,7 @@ import { reducers } from './store/app.reducers';
 import { CustomSerializer } from './store/app.state';
 import { ProjectsEffects } from './store/app.effects';
 import { environment } from '../environments/environment';
-
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -60,8 +60,9 @@ import { environment } from '../environments/environment';
     MatInputModule,
     MatFormFieldModule,
     DataModule,
+    AuthModule,
   ],
-  providers: [ { provide: RouterStateSerializer, useClass: CustomSerializer }],
+  providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
