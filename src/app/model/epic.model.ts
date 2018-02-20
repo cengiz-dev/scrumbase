@@ -3,8 +3,8 @@ import { Feature } from "./feature.model";
 export class Epic {
     public description: string;
     public features: Feature[];
-    public createdOn: Object;
-    public lastUpdatedOn: Object;
+    public createdOn: any;
+    public lastUpdatedOn: any;
 
     // TODO: public tasks: Task[] ?
 
