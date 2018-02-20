@@ -7,14 +7,14 @@ export class Project {
     public settings: ProjectSettings;
     public epics: Epic[];
     public sprints: Sprint[];
-    public createdOn: Object;
-    public lastUpdatedOn: Object;
+    public createdOn: any;
+    public lastUpdatedOn: any;
 
     // TODO:
     // createdBy
     // lastUpdatedBy
     // tasks ?
-    
+
     constructor(public title: string, public summary: string) { }
 }
 

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
+import { getProjects } from '../store/app.selectors';
 import { Project } from '../model/project.model';
 
 @Component({
@@ -14,14 +15,14 @@ import { Project } from '../model/project.model';
   styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent implements OnInit {
-  state$: Observable<ProjectsState>;
+  allProjects$: Observable<Project[]>;
   createProjectPanelOpenState: boolean = false;
 
   constructor(private store: Store<AppState>, private router: Router) { }
 
   ngOnInit() {
     this.store.dispatch(new ProjectsActions.GetProjects());
-    this.state$ = this.store.pipe(select('projects'));
+    this.allProjects$ = this.store.select(getProjects);
   }
 
   onCreateProject(form: NgForm) {

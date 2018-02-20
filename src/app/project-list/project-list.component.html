@@ -35,15 +35,8 @@
 </mat-expansion-panel>
 
 <mat-list>
-  <h3 mat-subheader>Recent Projects</h3>
-  <mat-list-item *ngFor="let p of (state$ | async).projects; let i = index" (click)="onProjectSelected(i)">
-    <mat-icon mat-list-icon>folder</mat-icon>
-    <h4 mat-line>Title: {{p.title}}</h4>
-    <p mat-line> Summary: {{p.summary}} </p>
-  </mat-list-item>
-  <mat-divider></mat-divider>
   <h3 mat-subheader>All Projects</h3>
-  <mat-list-item *ngFor="let p of (state$ | async).projects">
+  <mat-list-item *ngFor="let p of (allProjects$ | async); let i = index" (click)="onProjectSelected(i)">
     <mat-icon mat-list-icon>folder</mat-icon>
     <h4 mat-line>Title: {{p.title}}</h4>
     <p mat-line> Summary: {{p.summary}} </p>

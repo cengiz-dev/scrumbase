@@ -15,6 +15,12 @@ export const getProjects = createSelector(
     (state: ProjectsState) => state.projects,
 );
 
+// Filter out project created or updated more than 30 days ago.
+export const getRecentProjects = createSelector(
+    getProjects,
+    (projects: Project[]) => projects.filter( (item: Project) => Date.now() - item.lastUpdatedOn < 30*24*60*60*1000),
+);
+
 export const getSelectedProject = createSelector(
     getProjects,
     getRouterState,
