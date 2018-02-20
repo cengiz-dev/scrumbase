@@ -32,11 +32,8 @@ export class ProjectDetailsComponent implements OnInit {
 
   onSaveProject(form: NgForm, project: ProjectRef) {
     const value = form.value;
-    this.store.dispatch(new ProjectsActions.SaveProject({
-      id: project.id,
-      title: value.title,
-      summary: value.summary
-    }));
+    let projectRef = new ProjectRef(project.id, value.title, value.summary);
+    this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
   }
 
   onCancelEdit() {

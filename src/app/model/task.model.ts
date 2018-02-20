@@ -8,6 +8,8 @@ export class Task {
     public priority: TaskPriority;
     public status: TaskStatus;
     public subTasks: Task[];
+    public createdOn: Object;
+    public lastUpdatedOn: Object;
 
     // TODO:
     // createdBy

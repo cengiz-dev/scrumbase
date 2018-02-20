@@ -7,11 +7,11 @@ export class Project {
     public settings: ProjectSettings;
     public epics: Epic[];
     public sprints: Sprint[];
+    public createdOn: Object;
+    public lastUpdatedOn: Object;
 
-    // TODO: 
-    // createdOn
+    // TODO:
     // createdBy
-    // lastUpdatedOn
     // lastUpdatedBy
     // tasks ?
     

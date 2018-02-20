@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { database } from 'firebase';
 import { Observable } from 'rxjs/Observable';
 
 import { Project, ProjectRef } from '../model/project.model';
@@ -23,10 +24,13 @@ export class FirebaseDataService extends DataService {
   }
 
   addProjectToBackend(project: Project) {
+    project.createdOn = database.ServerValue.TIMESTAMP;
+    project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     this.db.list(ProjectRef.COLLECTION_NAME).push(project);
   }
 
   updateProjectInBackend(project: ProjectRef) {
+    project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     projects.update(project.id, { ...project });
   }
