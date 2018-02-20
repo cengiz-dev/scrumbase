@@ -6,6 +6,7 @@ import 'rxjs/add/operator/take';
 
 import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';
+import { User } from '../model/user.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -49,16 +50,16 @@ export abstract class DataService {
         return projects$;
     }
 
-    public addProject(project: Project) {
+    public addProject(project: Project, user: User) {
         this.lastRefresh = 0;
 
-        this.addProjectToBackend(project);
+        this.addProjectToBackend(project, user);
     }
 
-    public updateProject(project: ProjectRef) {
+    public updateProject(project: ProjectRef, user: User) {
         this.lastRefresh = 0;
 
-        this.updateProjectInBackend(project);
+        this.updateProjectInBackend(project, user);
     }
 
     private allowRefresh() {
@@ -72,7 +73,7 @@ export abstract class DataService {
 
     protected abstract getProjectsFromBackend(): Observable<any>;
 
-    protected abstract addProjectToBackend(project: Project);
+    protected abstract addProjectToBackend(project: Project, user: User);
 
-    protected abstract updateProjectInBackend(project: ProjectRef);
+    protected abstract updateProjectInBackend(project: ProjectRef, user: User);
 }

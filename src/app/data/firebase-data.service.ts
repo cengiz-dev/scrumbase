@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { Project, ProjectRef } from '../model/project.model';
 import { DataService } from './data.service';
+import { User } from '../model/user.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -23,14 +24,17 @@ export class FirebaseDataService extends DataService {
       });
   }
 
-  addProjectToBackend(project: Project) {
+  addProjectToBackend(project: Project, user: User) {
     project.createdOn = database.ServerValue.TIMESTAMP;
+    project.createdBy = user;
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    project.lastUpdatedBy = user;
     this.db.list(ProjectRef.COLLECTION_NAME).push(project);
   }
 
-  updateProjectInBackend(project: ProjectRef) {
+  updateProjectInBackend(project: ProjectRef, user: User) {
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    project.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     projects.update(project.id, { ...project });
   }

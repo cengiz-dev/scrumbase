@@ -1,6 +1,7 @@
 import { ProjectSettings } from "./project-settings.model";
 import { Epic } from "./epic.model";
 import { Sprint } from "./sprint.model";
+import { User } from "./user.model";
 
 export class Project {
     public description: string;
@@ -8,11 +9,11 @@ export class Project {
     public epics: Epic[];
     public sprints: Sprint[];
     public createdOn: any;
+    public createdBy: User;
     public lastUpdatedOn: any;
+    public lastUpdatedBy: User;
 
     // TODO:
-    // createdBy
-    // lastUpdatedBy
     // tasks ?
 
     constructor(public title: string, public summary: string) { }

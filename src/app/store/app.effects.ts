@@ -7,6 +7,7 @@ import 'rxjs/add/operator/switchMap';
 import { DataService } from '../data/data.service';
 import { GetProjects, CreateProject, SaveProject, ProjectsActionType } from './app.actions';
 import { AppState } from './app.state';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class ProjectsEffects {
@@ -20,7 +21,7 @@ export class ProjectsEffects {
   createProject = this.actions$
     .ofType(ProjectsActionType.CREATE_PROJECT)
     .switchMap((action: CreateProject) => {
-      this.dataService.addProject(action.payload);
+      this.authService.getUser().subscribe(user => this.dataService.addProject(action.payload, user));
       return Observable.of(new GetProjects());
     });
 
@@ -28,12 +29,13 @@ export class ProjectsEffects {
   updateProject = this.actions$
     .ofType(ProjectsActionType.SAVE_PROJECT)
     .switchMap((action: SaveProject) => {
-      this.dataService.updateProject(action.payload);
+      this.authService.getUser().subscribe(user => this.dataService.updateProject(action.payload, user));
       return Observable.of(new GetProjects());
     });
 
   constructor(
     private actions$: Actions,
     private dataService: DataService,
+    private authService: AuthService,
     private store: Store<AppState>) { }
 }
