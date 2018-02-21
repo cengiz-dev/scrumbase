@@ -3,6 +3,7 @@ import { Actions, Effect } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
 import { GetProjects, CreateProject, SaveProject, ProjectsActionType } from './app.actions';
@@ -21,16 +22,18 @@ export class ProjectsEffects {
   createProject = this.actions$
     .ofType(ProjectsActionType.CREATE_PROJECT)
     .switchMap((action: CreateProject) => {
-      this.authService.getUser().subscribe(user => this.dataService.addProject(action.payload, user));
-      return Observable.of(new GetProjects());
+      return this.authService.getUser()
+        .do(user => this.dataService.addProject(action.payload, user))
+        .map(() => new GetProjects());
     });
 
   @Effect()
   updateProject = this.actions$
     .ofType(ProjectsActionType.SAVE_PROJECT)
     .switchMap((action: SaveProject) => {
-      this.authService.getUser().subscribe(user => this.dataService.updateProject(action.payload, user));
-      return Observable.of(new GetProjects());
+      return this.authService.getUser()
+        .do(user => this.dataService.updateProject(action.payload, user))
+        .map(() => new GetProjects());
     });
 
   constructor(
