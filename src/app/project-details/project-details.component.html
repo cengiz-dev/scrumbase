@@ -1,35 +1,56 @@
 <ng-container *ngIf="(state$ | async) as viewState">
   <form *ngIf="(index$ | async) as i" (ngSubmit)="onSaveProject(f, viewState.projects[i])" #f="ngForm">
-    <mat-form-field *ngIf="viewState.editMode;else viewModeTitleContent">
-      <mat-label>title</mat-label>
-      <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.title">
-    </mat-form-field>
-    <ng-template #viewModeTitleContent>
+    <ng-container *ngIf="viewState.editMode;else viewMode">
+      <mat-form-field>
+        <mat-label>title</mat-label>
+        <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.title">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>description</mat-label>
+        <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+          [ngModel]="viewState.projects[i]?.description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select [ngModel]="viewState.projects[i]?.settings?.priorityScheme" name="priorityScheme">
+          <mat-option *ngFor="let key of prioritySchemeKeys" value="{{prioritySchemeValues[key]}}">{{prioritySchemeValues[key]}}</mat-option>
+        </mat-select>
+        <mat-hint align="end">Select the priority scheme</mat-hint>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-select [ngModel]="viewState.projects[i]?.settings?.pointScheme" name="pointScheme">
+          <mat-option *ngFor="let key of pointSchemeKeys" value="{{pointSchemeValues[key]}}">{{pointSchemeValues[key]}}</mat-option>
+        </mat-select>
+        <mat-hint align="end">Select the point scheme</mat-hint>
+      </mat-form-field>
+      <div>
+        <button mat-raised-button color="primary" type="submit">Save</button>
+        <button mat-raised-button color="primary" (click)="onCancelEdit()">Cancel</button>
+      </div>
+    </ng-container>
+    <ng-template #viewMode>
       <div class="data-line">
         <span class="data data-label">title:</span>
         &nbsp;
         <span class="data data-value">{{ viewState.projects[i]?.title }}</span>
       </div>
-    </ng-template>
-
-    <mat-form-field *ngIf="viewState.editMode;else viewModeSummaryContent">
-      <mat-label>description</mat-label>
-      <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
-        [ngModel]="viewState.projects[i]?.description"></textarea>
-    </mat-form-field>
-    <ng-template #viewModeSummaryContent>
       <div class="data-line">
         <span class="data data-label">description:</span>
         &nbsp;
         <span class="data data-value">{{ viewState.projects[i]?.description }}</span>
       </div>
-    </ng-template>
-
-    <div *ngIf="viewState.editMode;else viewModeButtons">
-      <button mat-raised-button color="primary" type="submit">Save</button>
-      <button mat-raised-button color="primary" (click)="onCancelEdit()">Cancel</button>
-    </div>
-    <ng-template #viewModeButtons>
+      <div class="data-line">
+        <span class="data data-label">priority scheme:</span>
+        &nbsp;
+        <span class="data data-value">{{ viewState.projects[i]?.settings?.priorityScheme }}</span>
+      </div>
+      <div class="data-line">
+        <span class="data data-label">point scheme:</span>
+        &nbsp;
+        <span class="data data-value">{{ viewState.projects[i]?.settings?.pointScheme }}</span>
+      </div>
       <button mat-raised-button color="primary" (click)="onEditProject(viewState.projects[i])">Edit</button>
     </ng-template>
   </form>

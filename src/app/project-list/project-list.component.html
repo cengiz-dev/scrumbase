@@ -1,7 +1,4 @@
-<mat-expansion-panel
-    (opened)="createProjectPanelOpenState = true"
-    (closed)="createProjectPanelOpenState = false"
-    [expanded]="createProjectPanelOpenState">
+<mat-expansion-panel (opened)="createProjectPanelOpenState = true" (closed)="createProjectPanelOpenState = false" [expanded]="createProjectPanelOpenState">
   <mat-expansion-panel-header>
     Create Project
   </mat-expansion-panel-header>
@@ -11,7 +8,7 @@
 
   <form (ngSubmit)="onCreateProject(f)" #f="ngForm">
     <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
-      <input matInput required ngModel name="title">
+      <input matInput required [(ngModel)]="createdProject.title" name="title">
       <mat-placeholder>
         <mat-icon>edit</mat-icon>
         <b>Project Title</b>
@@ -19,11 +16,25 @@
     </mat-form-field>
 
     <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
-      <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" ngModel name="description"></textarea>
+      <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" [(ngModel)]="createdProject.description" name="description"></textarea>
       <mat-placeholder>
         <mat-icon>edit</mat-icon>
         <b>Project Description</b>
       </mat-placeholder>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="createdProject.settings.priorityScheme" name="priorityScheme">
+        <mat-option *ngFor="let key of prioritySchemeKeys" value="{{prioritySchemeValues[key]}}">{{prioritySchemeValues[key]}}</mat-option>
+      </mat-select>
+      <mat-hint align="end">Select the priority scheme</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select [(ngModel)]="createdProject.settings.pointScheme" name="pointScheme">
+        <mat-option *ngFor="let key of pointSchemeKeys" value="{{pointSchemeValues[key]}}">{{pointSchemeValues[key]}}</mat-option>
+      </mat-select>
+      <mat-hint align="end">Select the point scheme</mat-hint>
     </mat-form-field>
 
     <mat-action-row>

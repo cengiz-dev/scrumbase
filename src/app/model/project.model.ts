@@ -1,4 +1,4 @@
-import { ProjectSettings } from "./project-settings.model";
+import { ProjectSettings, TaskPriorityScheme, TaskPointScheme } from "./project-settings.model";
 import { Epic } from "./epic.model";
 import { Sprint } from "./sprint.model";
 import { User } from "./user.model";
@@ -16,7 +16,10 @@ export class Project {
     // TODO:
     // tasks ?
 
-    constructor(public title: string) { }
+    constructor(public title: string) {
+        // set default values for project settings
+        this.settings = new ProjectSettings(TaskPriorityScheme.MOSCOW, TaskPointScheme.FIBONACCI);
+    }
 }
 
 export class ProjectRef extends Project {

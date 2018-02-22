@@ -10,6 +10,7 @@ import {
   MatExpansionModule,
   MatInputModule,
   MatFormFieldModule,
+  MatSelectModule,
 } from '@angular/material';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -59,6 +60,7 @@ import { AuthModule } from './auth/auth.module';
     MatExpansionModule,
     MatInputModule,
     MatFormFieldModule,
+    MatSelectModule,
     DataModule,
     AuthModule,
   ],

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
+import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
 
 @Component({
   selector: 'app-project-details',
@@ -16,6 +17,10 @@ import { ProjectRef } from '../model/project.model';
 export class ProjectDetailsComponent implements OnInit {
   state$: Observable<ProjectsState>;
   index$: Observable<Params>;
+  prioritySchemeKeys = Object.keys(TaskPriorityScheme);
+  prioritySchemeValues = TaskPriorityScheme;
+  pointSchemeKeys = Object.keys(TaskPointScheme);
+  pointSchemeValues = TaskPointScheme;
 
   constructor(private store: Store<AppState>, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
@@ -34,6 +39,8 @@ export class ProjectDetailsComponent implements OnInit {
     const value = form.value;
     let projectRef = new ProjectRef(project.id, value.title);
     projectRef.description = value.description;
+    projectRef.settings.priorityScheme = value.priorityScheme;
+    projectRef.settings.pointScheme = value.pointScheme;
     this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
   }
 

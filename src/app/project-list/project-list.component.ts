@@ -8,6 +8,7 @@ import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { getProjects } from '../store/app.selectors';
 import { Project } from '../model/project.model';
+import { TaskPriorityScheme, TaskPointScheme, ProjectSettings } from '../model/project-settings.model';
 
 @Component({
   selector: 'app-project-list',
@@ -17,6 +18,11 @@ import { Project } from '../model/project.model';
 export class ProjectListComponent implements OnInit {
   allProjects$: Observable<Project[]>;
   createProjectPanelOpenState: boolean = false;
+  createdProject = new Project('');
+  prioritySchemeKeys = Object.keys(TaskPriorityScheme);
+  prioritySchemeValues = TaskPriorityScheme;
+  pointSchemeKeys = Object.keys(TaskPointScheme);
+  pointSchemeValues = TaskPointScheme;
 
   constructor(private store: Store<AppState>, private router: Router) { }
 
@@ -26,11 +32,9 @@ export class ProjectListComponent implements OnInit {
   }
 
   onCreateProject(form: NgForm) {
-    const value = form.value;
-    let createdProject = new Project(value.title);
-    createdProject.description = value.description;
-    this.store.dispatch(new ProjectsActions.CreateProject(createdProject));
+    this.store.dispatch(new ProjectsActions.CreateProject({ ...this.createdProject }));
     form.resetForm();
+    this.createdProject = new Project('');
     this.createProjectPanelOpenState = false;
   }
 
