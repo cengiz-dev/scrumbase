@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
-import { GetProjects, CreateProject, SaveProject, ProjectsActionType } from './app.actions';
+import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 
@@ -33,6 +33,15 @@ export class ProjectsEffects {
     .switchMap((action: SaveProject) => {
       return this.authService.getUser()
         .do(user => this.dataService.updateProject(action.payload, user))
+        .map(() => new GetProjects());
+    });
+
+  @Effect()
+  addEpic = this.actions$
+    .ofType(ProjectsActionType.ADD_EPIC)
+    .switchMap((action: AddEpic) => {
+      return this.authService.getUser()
+        .do(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
         .map(() => new GetProjects());
     });
 

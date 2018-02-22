@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -8,6 +8,7 @@ import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
 import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
+import { Epic } from '../model/epic.model';
 
 @Component({
   selector: 'app-project-details',
@@ -21,8 +22,10 @@ export class ProjectDetailsComponent implements OnInit {
   prioritySchemeValues = TaskPriorityScheme;
   pointSchemeKeys = Object.keys(TaskPointScheme);
   pointSchemeValues = TaskPointScheme;
+  addedEpicPanelOpenState: boolean = false;
+  addedEpic = new Epic('');
 
-  constructor(private store: Store<AppState>, private activatedRoute: ActivatedRoute) {
+  constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
     this.state$ = this.store.pipe(select('projects'));
     this.index$ = this.activatedRoute.params.switchMap(params => params['index']);
@@ -44,7 +47,18 @@ export class ProjectDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
   }
 
-  onCancelEdit() {
+  onCancelEditProject() {
     this.store.dispatch(new ProjectsActions.CancelEdit());
+  }
+
+  onAddEpic(form: NgForm, project: ProjectRef) {
+    this.store.dispatch(new ProjectsActions.AddEpic({ project: project, epic: { ...this.addedEpic }}));
+    form.resetForm();
+    this.addedEpic = new Epic('');
+    this.addedEpicPanelOpenState = false;
+  }
+
+  onEpicSelected(projectIndex: number, epicIndex: number) {
+    this.router.navigate(['project', projectIndex, 'epic', epicIndex]);
   }
 }

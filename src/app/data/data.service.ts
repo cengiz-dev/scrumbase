@@ -7,6 +7,7 @@ import 'rxjs/add/operator/take';
 import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';
 import { User } from '../model/user.model';
+import { Epic } from '../model/epic.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -62,6 +63,12 @@ export abstract class DataService {
         this.updateProjectInBackend(project, user);
     }
 
+    public addEpic(project: ProjectRef, epic: Epic, user: User) {
+        this.lastRefresh = 0;
+
+        this.addEpicInBackend(project, epic, user);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -76,4 +83,6 @@ export abstract class DataService {
     protected abstract addProjectToBackend(project: Project, user: User);
 
     protected abstract updateProjectInBackend(project: ProjectRef, user: User);
+
+    protected abstract addEpicInBackend(project: ProjectRef, epic: Epic, user: User);
 }

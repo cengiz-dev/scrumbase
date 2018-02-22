@@ -1,6 +1,7 @@
 import { Action } from '@ngrx/store';
 
 import { Project, ProjectRef } from '../model/project.model';
+import { Epic } from '../model/epic.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
@@ -8,7 +9,8 @@ export enum ProjectsActionType {
   CREATE_PROJECT = 'CREATE_PROJECT',
   EDIT_PROJECT = 'EDIT_PROJECT',
   SAVE_PROJECT = 'SAVE_PROJECT',
-  CANCEL_EDIT = 'CANCEL_EDIT'
+  CANCEL_EDIT = 'CANCEL_EDIT',
+  ADD_EPIC = 'ADD_EPIC',
 }
 
 export class SetProjects implements Action {
@@ -47,10 +49,17 @@ export class CancelEdit implements Action {
   constructor() {}
 }
 
+export class AddEpic implements Action {
+  readonly type = ProjectsActionType.ADD_EPIC;
+
+  constructor(public payload: { project: ProjectRef, epic: Epic }) {}
+}
+
 export type AllProjectsActions =
   GetProjects |
   SetProjects |
   CreateProject |
   EditProject |
   SaveProject |
-  CancelEdit;
+  CancelEdit |
+  AddEpic;

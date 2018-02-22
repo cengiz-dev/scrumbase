@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Project, ProjectRef } from '../model/project.model';
 import { DataService } from './data.service';
 import { User } from '../model/user.model';
+import { Epic } from '../model/epic.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -37,5 +38,14 @@ export class FirebaseDataService extends DataService {
     project.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     projects.update(project.id, { ...project });
+  }
+  
+  addEpicInBackend(project: ProjectRef, epic: Epic, user: User) {
+    if (!project.epics) {
+      project.epics = new Array<Epic>();
+    }
+    project.epics.push(epic);
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
 }

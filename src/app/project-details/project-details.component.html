@@ -1,57 +1,101 @@
 <ng-container *ngIf="(state$ | async) as viewState">
-  <form *ngIf="(index$ | async) as i" (ngSubmit)="onSaveProject(f, viewState.projects[i])" #f="ngForm">
-    <ng-container *ngIf="viewState.editMode;else viewMode">
-      <mat-form-field>
-        <mat-label>title</mat-label>
-        <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.title">
-      </mat-form-field>
+  <ng-container *ngIf="(index$ | async) as i">
+    <form (ngSubmit)="onSaveProject(f, viewState.projects[i])" #f="ngForm">
+      <ng-container *ngIf="viewState.editMode;else viewMode">
+        <mat-form-field>
+          <mat-label>title</mat-label>
+          <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.title">
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>description</mat-label>
-        <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
-          [ngModel]="viewState.projects[i]?.description"></textarea>
-      </mat-form-field>
+        <mat-form-field>
+          <mat-label>description</mat-label>
+          <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+            [ngModel]="viewState.projects[i]?.description"></textarea>
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-select [ngModel]="viewState.projects[i]?.settings?.priorityScheme" name="priorityScheme">
-          <mat-option *ngFor="let key of prioritySchemeKeys" value="{{prioritySchemeValues[key]}}">{{prioritySchemeValues[key]}}</mat-option>
-        </mat-select>
-        <mat-hint align="end">Select the priority scheme</mat-hint>
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-select [ngModel]="viewState.projects[i]?.settings?.pointScheme" name="pointScheme">
-          <mat-option *ngFor="let key of pointSchemeKeys" value="{{pointSchemeValues[key]}}">{{pointSchemeValues[key]}}</mat-option>
-        </mat-select>
-        <mat-hint align="end">Select the point scheme</mat-hint>
-      </mat-form-field>
-      <div>
-        <button mat-raised-button color="primary" type="submit">Save</button>
-        <button mat-raised-button color="primary" (click)="onCancelEdit()">Cancel</button>
-      </div>
-    </ng-container>
-    <ng-template #viewMode>
-      <div class="data-line">
-        <span class="data data-label">title:</span>
-        &nbsp;
-        <span class="data data-value">{{ viewState.projects[i]?.title }}</span>
-      </div>
-      <div class="data-line">
-        <span class="data data-label">description:</span>
-        &nbsp;
-        <span class="data data-value">{{ viewState.projects[i]?.description }}</span>
-      </div>
-      <div class="data-line">
-        <span class="data data-label">priority scheme:</span>
-        &nbsp;
-        <span class="data data-value">{{ viewState.projects[i]?.settings?.priorityScheme }}</span>
-      </div>
-      <div class="data-line">
-        <span class="data data-label">point scheme:</span>
-        &nbsp;
-        <span class="data data-value">{{ viewState.projects[i]?.settings?.pointScheme }}</span>
-      </div>
-      <button mat-raised-button color="primary" (click)="onEditProject(viewState.projects[i])">Edit</button>
-    </ng-template>
-  </form>
+        <mat-form-field>
+          <mat-select [ngModel]="viewState.projects[i]?.settings?.priorityScheme" name="priorityScheme">
+            <mat-option *ngFor="let key of prioritySchemeKeys" value="{{prioritySchemeValues[key]}}">{{prioritySchemeValues[key]}}</mat-option>
+          </mat-select>
+          <mat-hint align="end">Select the priority scheme</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select [ngModel]="viewState.projects[i]?.settings?.pointScheme" name="pointScheme">
+            <mat-option *ngFor="let key of pointSchemeKeys" value="{{pointSchemeValues[key]}}">{{pointSchemeValues[key]}}</mat-option>
+          </mat-select>
+          <mat-hint align="end">Select the point scheme</mat-hint>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button color="primary" type="submit">Save</button>
+          <button mat-raised-button color="primary" (click)="onCancelEditProject()">Cancel</button>
+        </div>
+      </ng-container>
+      <ng-template #viewMode>
+        <div class="data-line">
+          <span class="data data-label">title:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.title }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data data-label">description:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.description }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data data-label">priority scheme:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.settings?.priorityScheme }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data data-label">point scheme:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.settings?.pointScheme }}</span>
+        </div>
+        <button mat-raised-button color="primary" (click)="onEditProject(viewState.projects[i])">Edit</button>
+      </ng-template>
+    </form>
+
+    <mat-list>
+      <h3 mat-subheader>Epics</h3>
+      <mat-list-item *ngFor="let epic of viewState.projects[i]?.epics; let i = index" (click)="onEpicSelected(i)">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <h4 mat-line>Title: {{epic.title}}</h4>
+        <p mat-line> Description: {{epic.description}} </p>
+      </mat-list-item>
+      <mat-expansion-panel (opened)="addEpicPanelOpenState = true" (closed)="addEpicPanelOpenState = false" [expanded]="addEpicPanelOpenState">
+        <mat-expansion-panel-header>
+          Add Epic
+        </mat-expansion-panel-header>
+        <mat-panel-description *ngIf="addEpicPanelOpenState">
+          Please fill out the epic information and click the add button.
+        </mat-panel-description>
+
+        <form (ngSubmit)="onAddEpic(f, viewState.projects[i])" #f="ngForm">
+          <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+            <input matInput required [(ngModel)]="addedEpic.title" name="title">
+            <mat-placeholder>
+              <mat-icon>edit</mat-icon>
+              <b>Epic Title</b>
+            </mat-placeholder>
+          </mat-form-field>
+
+          <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+            <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" [(ngModel)]="addedEpic.description"
+              name="description"></textarea>
+            <mat-placeholder>
+              <mat-icon>edit</mat-icon>
+              <b>Epic Description</b>
+            </mat-placeholder>
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-icon-button color="primary" title="add epic" type="submit" [disabled]="!f.valid">
+              <mat-icon aria-label="Add epic button">add</mat-icon>
+            </button>
+          </mat-action-row>
+        </form>
+      </mat-expansion-panel>
+    </mat-list>
+  </ng-container>
 </ng-container>
