@@ -11,6 +11,8 @@ export enum ProjectsActionType {
   SAVE_PROJECT = 'SAVE_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
+  BACKEND_ERROR = 'BACKEND_ERROR',
+  DIALOG_CLOSED = 'DIALOG_CLOSED',
 }
 
 export class SetProjects implements Action {
@@ -55,6 +57,18 @@ export class AddEpic implements Action {
   constructor(public payload: { project: ProjectRef, epic: Epic }) {}
 }
 
+export class BackendError implements Action {
+  readonly type = ProjectsActionType.BACKEND_ERROR;
+
+  constructor(public payload: any) {}
+}
+
+export class DialogClosed implements Action {
+  readonly type = ProjectsActionType.DIALOG_CLOSED;
+
+  constructor() {}
+}
+
 export type AllProjectsActions =
   GetProjects |
   SetProjects |
@@ -62,4 +76,6 @@ export type AllProjectsActions =
   EditProject |
   SaveProject |
   CancelEdit |
-  AddEpic;
+  AddEpic |
+  BackendError |
+  DialogClosed;

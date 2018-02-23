@@ -12,6 +12,7 @@ export interface RouterStateUrl {
 export interface ProjectsState {
     projects: Project[],
     editMode: boolean,
+    backendError: { code: string, message: string },
 }
 
 export interface AppState {

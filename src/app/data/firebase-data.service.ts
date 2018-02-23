@@ -33,11 +33,11 @@ export class FirebaseDataService extends DataService {
     this.db.list(ProjectRef.COLLECTION_NAME).push(project);
   }
 
-  updateProjectInBackend(project: ProjectRef, user: User) {
+  updateProjectInBackend(project: ProjectRef, user: User): Promise<void> {
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     project.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    projects.update(project.id, { ...project });
+    return projects.update(project.id, { ...project });
   }
   
   addEpicInBackend(project: ProjectRef, epic: Epic, user: User) {

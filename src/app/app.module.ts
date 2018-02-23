@@ -11,6 +11,7 @@ import {
   MatInputModule,
   MatFormFieldModule,
   MatSelectModule,
+  MatDialogModule,
 } from '@angular/material';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -20,6 +21,7 @@ import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
+import { AppDialogComponent } from './app.dialog';
 import { HeaderComponent } from './header/header.component';
 import { ProjectListComponent } from './project-list/project-list.component';
 import { DataModule } from './data/data.module';
@@ -34,6 +36,7 @@ import { AuthModule } from './auth/auth.module';
 @NgModule({
   declarations: [
     AppComponent,
+    AppDialogComponent,
     HeaderComponent,
     ProjectListComponent,
     ProjectDetailsComponent,
@@ -61,10 +64,12 @@ import { AuthModule } from './auth/auth.module';
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatDialogModule,
     DataModule,
     AuthModule,
   ],
   providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AppDialogComponent],
 })
 export class AppModule { }

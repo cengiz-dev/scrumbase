@@ -13,10 +13,21 @@ export const reducers: ActionReducerMap<AppState, AllProjectsActions | RouterAct
 const initialState: ProjectsState = {
   projects: [],
   editMode: false,
+  backendError: undefined,
 };
 
 export function projectsReducer(state = initialState, action: AllProjectsActions): ProjectsState {
   switch (action.type) {
+    case ProjectsActionType.BACKEND_ERROR:
+      return {
+        ...state,
+        backendError: action.payload,
+      };
+    case ProjectsActionType.DIALOG_CLOSED:
+      return {
+        ...state,
+        backendError: undefined,
+      };
     case ProjectsActionType.SET_PROJECTS:
       return {
         ...state,
