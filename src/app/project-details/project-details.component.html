@@ -56,7 +56,7 @@
 
     <mat-list>
       <h3 mat-subheader>Epics</h3>
-      <mat-list-item *ngFor="let epic of viewState.projects[i]?.epics; let i = index" (click)="onEpicSelected(i)">
+      <mat-list-item *ngFor="let epic of viewState.projects[i]?.epics; let epicIndex = index" (click)="onEpicSelected(i, epicIndex)">
         <mat-icon mat-list-icon>folder</mat-icon>
         <h4 mat-line>Title: {{epic.title}}</h4>
         <p mat-line> Description: {{epic.description}} </p>

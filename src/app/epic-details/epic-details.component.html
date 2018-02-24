@@ -1,0 +1,76 @@
+<ng-container *ngIf="(state$ | async) as viewState">
+  <ng-container *ngIf="(index$ | async) as i">
+    <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
+      <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveEpic(f, viewState.projects[i], viewState.projects[i].epics[epicIndex])" #f="ngForm">
+        <mat-form-field>
+          <mat-label>title</mat-label>
+          <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.epics[epicIndex]?.title">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>description</mat-label>
+          <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+            [ngModel]="viewState.projects[i]?.epics[epicIndex]?.description"></textarea>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button color="primary" type="submit">Save</button>
+          <button mat-raised-button color="primary" (click)="onCancelEditEpic()">Cancel</button>
+        </div>
+      </form>
+      <ng-template #viewMode>
+        <div class="data-line">
+          <span class="data data-label">title:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.title }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data data-label">description:</span>
+          &nbsp;
+          <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.description }}</span>
+        </div>
+        <button mat-raised-button color="primary" (click)="onEditEpic(viewState.projects[i]?.epics[epicIndex])">Edit</button>
+      </ng-template>
+
+      <mat-list>
+        <h3 mat-subheader>Features</h3>
+        <mat-list-item *ngFor="let feature of viewState.projects[i]?.epics[epicIndex]?.features; let featureIndex = index" (click)="onFeatureSelected(featureIndex)">
+          <mat-icon mat-list-icon>folder</mat-icon>
+          <h4 mat-line>Title: {{feature.title}}</h4>
+          <p mat-line> Description: {{feature.description}} </p>
+        </mat-list-item>
+        <mat-expansion-panel (opened)="addFeaturePanelOpenState = true" (closed)="addFeaturePanelOpenState = false" [expanded]="addFeaturePanelOpenState">
+          <mat-expansion-panel-header>
+            Add Feature
+          </mat-expansion-panel-header>
+          <mat-panel-description *ngIf="addFeaturePanelOpenState">
+            Please fill out the feature information and click the add button.
+          </mat-panel-description>
+
+          <form (ngSubmit)="onAddFeature(f, viewState.projects[i])" #f="ngForm">
+            <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+              <input matInput required [(ngModel)]="addedFeature.title" name="title">
+              <mat-placeholder>
+                <mat-icon>edit</mat-icon>
+                <b>Feature Title</b>
+              </mat-placeholder>
+            </mat-form-field>
+
+            <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+              <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" [(ngModel)]="addedFeature.description"
+                name="description"></textarea>
+              <mat-placeholder>
+                <mat-icon>edit</mat-icon>
+                <b>Feature Description</b>
+              </mat-placeholder>
+            </mat-form-field>
+
+            <mat-action-row>
+              <button mat-icon-button color="primary" title="add feature" type="submit" [disabled]="!f.valid">
+                <mat-icon aria-label="Add feature button">add</mat-icon>
+              </button>
+            </mat-action-row>
+          </form>
+        </mat-expansion-panel>
+      </mat-list>
+    </ng-container>
+  </ng-container>
+</ng-container>

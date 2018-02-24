@@ -7,38 +7,36 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, ProjectsState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
-import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
 import { Epic } from '../model/epic.model';
+import { Feature } from '../model/feature.model';
 
 @Component({
-  selector: 'app-project-details',
-  templateUrl: './project-details.component.html',
-  styleUrls: ['./project-details.component.css']
+  selector: 'app-epic-details',
+  templateUrl: './epic-details.component.html',
+  styleUrls: ['./epic-details.component.css']
 })
-export class ProjectDetailsComponent implements OnInit {
+export class EpicDetailsComponent implements OnInit {
   state$: Observable<ProjectsState>;
   index$: Observable<Params>;
-  prioritySchemeKeys = Object.keys(TaskPriorityScheme);
-  prioritySchemeValues = TaskPriorityScheme;
-  pointSchemeKeys = Object.keys(TaskPointScheme);
-  pointSchemeValues = TaskPointScheme;
-  addEpicPanelOpenState: boolean = false;
-  addedEpic = new Epic('');
+  epicIndex$: Observable<Params>;
+  addFeaturePanelOpenState: boolean = false;
+  addedFeature = new Feature('');
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
     this.state$ = this.store.pipe(select('projects'));
     this.index$ = this.activatedRoute.params.switchMap(params => params['index']);
+    this.epicIndex$ = this.activatedRoute.params.switchMap(params => params['epicIndex']);
   }
 
   ngOnInit() {
   }
 
-  onEditProject(project: ProjectRef) {
+  onEditEpic(project: ProjectRef) {
     this.store.dispatch(new ProjectsActions.EditProject(project));
   }
 
-  onSaveProject(form: NgForm, project: ProjectRef) {
+  onSaveEpic(form: NgForm, project: ProjectRef) {
     const value = form.value;
     let projectRef = new ProjectRef(project.id, value.title);
     projectRef.description = value.description;
@@ -47,18 +45,18 @@ export class ProjectDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
   }
 
-  onCancelEditProject() {
+  onCancelEditEpic() {
     this.store.dispatch(new ProjectsActions.CancelEdit());
   }
 
-  onAddEpic(form: NgForm, project: ProjectRef) {
-    this.store.dispatch(new ProjectsActions.AddEpic({ project: project, epic: { ...this.addedEpic }}));
+  onAddFeature(form: NgForm, project: ProjectRef) {
+    // this.store.dispatch(new ProjectsActions.AddFeature({ project: project, epic: { ...this.addedFeature }}));
     form.resetForm();
-    this.addedEpic = new Epic('');
-    this.addEpicPanelOpenState = false;
+    this.addedFeature = new Feature('');
+    this.addFeaturePanelOpenState = false;
   }
 
-  onEpicSelected(projectIndex: number, epicIndex: number) {
-    this.router.navigate(['project', projectIndex, 'epic', epicIndex]);
+  onFeatureSelected(projectIndex: number, epicIndex: number, featureIndex: number) {
+    this.router.navigate(['project', projectIndex, 'epic', epicIndex, 'feature', featureIndex]);
   }
 }
