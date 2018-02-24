@@ -51,10 +51,10 @@ export abstract class DataService {
         return projects$;
     }
 
-    public addProject(project: Project, user: User) {
+    public addProject(project: Project, user: User): Observable<any> {
         this.lastRefresh = 0;
 
-        this.addProjectToBackend(project, user);
+        return this.addProjectToBackend(project, user);
     }
 
     public updateProject(project: ProjectRef, user: User): Promise<void> {
@@ -63,10 +63,10 @@ export abstract class DataService {
         return this.updateProjectInBackend(project, user);
     }
 
-    public addEpic(project: ProjectRef, epic: Epic, user: User) {
+    public addEpic(project: ProjectRef, epic: Epic, user: User): Promise<void> {
         this.lastRefresh = 0;
 
-        this.addEpicInBackend(project, epic, user);
+        return this.addEpicInBackend(project, epic, user);
     }
 
     private allowRefresh() {

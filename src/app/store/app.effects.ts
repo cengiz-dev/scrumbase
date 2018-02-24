@@ -24,51 +24,42 @@ export class ProjectsEffects {
   createProject$ = this.actions$
     .ofType(ProjectsActionType.CREATE_PROJECT)
     .switchMap((action: CreateProject) => {
-      return this.authService.getUser()
-        .do(user => this.dataService.addProject(action.payload, user))
-        .map(() => new GetProjects());
+      const user$ = this.authService.getUser();
+      const create$ = user$.pipe(
+        mergeMap(user => this.dataService.addProject(action.payload, user))
+      );
+      return create$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err))))
     });
 
-  // @Effect()
-  // updateProject$ = this.actions$
-  //   .ofType(ProjectsActionType.SAVE_PROJECT)
-  //   .switchMap((action: SaveProject) => {
-  //     return this.authService.getUser()
-  //       .switchMap(user => this.dataService.updateProject(action.payload, user).catch(err => Observable.throw(err)))
-  //       .map((err) => err ? new BackendError(err) : new GetProjects());
-  //   });
-    
-    @Effect()
-    updateData$ = this.actions$.pipe(
-      ofType(ProjectsActionType.SAVE_PROJECT),
-      mergeMap((action: SaveProject) => {
-        const user$ = this.authService.getUser();
-        const dataUpdate$ = user$.pipe(
-          mergeMap(user => this.dataService.updateProject(action.payload, user))
-        );
-        return dataUpdate$.pipe(
-          map(() => new GetProjects()),
-          catchError(err => of(new BackendError(err)))
-        );
-      })
-    );
-
-  // @Effect()
-  // updateProject$ = this.actions$.pipe(
-  //   ofType(ProjectsActionType.SAVE_PROJECT),
-  //   map((action: SaveProject) => action.payload),
-  //   combineLatest(this.authService.getUser(), (project, user) => this.dataService.updateProject(project, user).catch(err => Observable.throw(err))),
-  //   map((err) => {console.log(err); new GetProjects()}),
-  //   catchError((err) => { console.log('this is an error!!!', err); return of(new BackendError(err)) })
-  // );
+  @Effect()
+  updateProject$ = this.actions$.pipe(
+    ofType(ProjectsActionType.SAVE_PROJECT),
+    mergeMap((action: SaveProject) => {
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.updateProject(action.payload, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
+    })
+  );
 
   @Effect()
   addEpic$ = this.actions$
     .ofType(ProjectsActionType.ADD_EPIC)
     .switchMap((action: AddEpic) => {
-      return this.authService.getUser()
-        .do(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
-        .map(() => new GetProjects());
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
     });
 
   constructor(

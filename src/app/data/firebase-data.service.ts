@@ -7,6 +7,7 @@ import { Project, ProjectRef } from '../model/project.model';
 import { DataService } from './data.service';
 import { User } from '../model/user.model';
 import { Epic } from '../model/epic.model';
+import './observable.from-thenable';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -25,12 +26,12 @@ export class FirebaseDataService extends DataService {
       });
   }
 
-  addProjectToBackend(project: Project, user: User) {
+  addProjectToBackend(project: Project, user: User): Observable<any> {
     project.createdOn = database.ServerValue.TIMESTAMP;
     project.createdBy = user;
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     project.lastUpdatedBy = user;
-    this.db.list(ProjectRef.COLLECTION_NAME).push(project);
+    return Observable.fromThenable(this.db.list(ProjectRef.COLLECTION_NAME).push(project));
   }
 
   updateProjectInBackend(project: ProjectRef, user: User): Promise<void> {
@@ -40,12 +41,12 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.id, { ...project });
   }
   
-  addEpicInBackend(project: ProjectRef, epic: Epic, user: User) {
+  addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void>  {
     if (!project.epics) {
       project.epics = new Array<Epic>();
     }
     project.epics.push(epic);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+    return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
 }
