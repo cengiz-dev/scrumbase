@@ -25,7 +25,7 @@ export class EpicDetailsComponent implements OnInit {
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
     this.state$ = this.store.pipe(select('projects'));
-    this.index$ = this.activatedRoute.params.switchMap(params => params['index']);
+    this.index$ = this.activatedRoute.parent.params.switchMap(params => params['index']);
     this.epicIndex$ = this.activatedRoute.params.switchMap(params => params['epicIndex']);
   }
 
