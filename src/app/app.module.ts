@@ -33,6 +33,7 @@ import { ProjectsEffects } from './store/app.effects';
 import { environment } from '../environments/environment';
 import { AuthModule } from './auth/auth.module';
 import { EpicDetailsComponent } from './epic-details/epic-details.component';
+import { ProjectComponent } from './project/project.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { EpicDetailsComponent } from './epic-details/epic-details.component';
     ProjectDetailsComponent,
     HomeComponent,
     EpicDetailsComponent,
+    ProjectComponent,
   ],
   imports: [
     BrowserModule,
