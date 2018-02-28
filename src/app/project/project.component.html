@@ -1,4 +1,18 @@
-<p>
-  project works!
-</p>
+<mat-toolbar color="accent" *ngIf="(selectedProject$ | async) as selectedProject">
+  <ng-container *ngIf="(selectedProjectIndex$ | async) as selectedProjectIndex">
+    <a mat-button routerLink="/project/{{selectedProjectIndex}}">
+      <h2 class="project-title">{{selectedProject.title}} </h2>
+    </a>
+  </ng-container>
+  <a mat-button routerLink="/">sprints</a>
+  <a mat-button routerLink="/">backlog</a>
+  <a mat-button routerLink="/">collaborators</a>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="fill-remaining-space"></span>
+
+  <span>
+    <a mat-button routerLink="/projects" color="primary" class="bold-text">all projects</a>
+  </span>
+</mat-toolbar>
 <router-outlet></router-outlet>

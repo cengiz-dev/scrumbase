@@ -2,20 +2,14 @@
   <a mat-button routerLink="/">
     <h1>ScrumBase</h1>
   </a>
-  <h2 *ngIf="(selectedProject$ | async) as selectedProject">- {{selectedProject.title}}</h2>
 
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
   <span>
     <a mat-button *ngIf="!(user$ | async)" (click)="onLogin()">login</a>
-  <span *ngIf="(user$ | async) as user">{{user.displayName}} |
-    <a mat-button (click)="onLogout()">logout</a>
+    <span *ngIf="(user$ | async) as user">{{user.displayName}} |
+      <a mat-button (click)="onLogout()">logout</a>
+    </span>
   </span>
-  </span>
-</mat-toolbar>
-<mat-toolbar color="accent" *ngIf="(selectedProject$ | async) as selectedProject">
-  <a mat-button routerLink="/">sprints</a>
-  <a mat-button routerLink="/">backlog</a>
-  <a mat-button routerLink="/">collaborators</a>
 </mat-toolbar>

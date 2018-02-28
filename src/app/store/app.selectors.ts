@@ -33,3 +33,14 @@ export const getSelectedProject = createSelector(
         return result;
     }
 );
+
+export const getSelectedProjectIndex = createSelector(
+    getRouterState,
+    (routerState: RouterReducerState<RouterStateUrl>): number => {
+        let result: number;
+        if (routerState) {
+            result = routerState.state.params.index;
+        }
+        return result;
+    }
+);
