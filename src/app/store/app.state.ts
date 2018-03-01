@@ -7,10 +7,12 @@ export interface RouterStateUrl {
     url: string;
     queryParams: Params;
     params: Params;
+    segments: string[];
 }
 
 export interface ProjectsState {
     projects: Project[],
+    breadcrumbs: string[],
     editMode: boolean,
     backendError: { code: string, message: string },
 }
@@ -25,12 +27,16 @@ export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
         const { url } = routerState;
         const { queryParams } = routerState.root;
         let params: any;
+        let segments = new Array<string>();
         let state: ActivatedRouteSnapshot = routerState.root;
         while (state.firstChild) {
             state = state.firstChild;
             params = { ...params, ...state.params };
+            if (state.url.length > 0) {
+                segments.push(state.url[0].path);
+            }
         }
 
-        return { url, queryParams, params };
+        return { url, queryParams, params, segments };
     }
 }

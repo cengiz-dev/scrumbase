@@ -15,4 +15,7 @@
     <a mat-button routerLink="/projects" color="primary" class="bold-text">all projects</a>
   </span>
 </mat-toolbar>
+<div class="breadcrumb-container" *ngIf="(breadcrumbs$ | async) as breadcrumbs">
+  <span class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs">{{ breadcrumb | titlecase }}</span>
+</div>
 <router-outlet></router-outlet>

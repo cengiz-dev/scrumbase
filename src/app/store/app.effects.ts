@@ -7,7 +7,7 @@ import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
-import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError } from './app.actions';
+import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, BreadcrumbChanged } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
@@ -15,13 +15,14 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 @Injectable()
 export class ProjectsEffects {
   @Effect()
-  getProjects$ = this.actions$
+  getProjects$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.GET_PROJECTS)
     .switchMap((action: GetProjects) => this.dataService.getProjects())
-    .map(projects => ({ type: ProjectsActionType.SET_PROJECTS, payload: projects }));
+    .map(projects => new SetProjects(projects));
+  // .map(projects => ({ type: ProjectsActionType.SET_PROJECTS, payload: projects }));
 
   @Effect()
-  createProject$ = this.actions$
+  createProject$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.CREATE_PROJECT)
     .switchMap((action: CreateProject) => {
       const user$ = this.authService.getUser();
@@ -34,7 +35,7 @@ export class ProjectsEffects {
     });
 
   @Effect()
-  updateProject$ = this.actions$.pipe(
+  updateProject$: Observable<AllProjectsActions> = this.actions$.pipe(
     ofType(ProjectsActionType.SAVE_PROJECT),
     mergeMap((action: SaveProject) => {
       const user$ = this.authService.getUser();
@@ -49,7 +50,7 @@ export class ProjectsEffects {
   );
 
   @Effect()
-  addEpic$ = this.actions$
+  addEpic$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.ADD_EPIC)
     .switchMap((action: AddEpic) => {
       const user$ = this.authService.getUser();
@@ -61,6 +62,15 @@ export class ProjectsEffects {
         catchError(err => of(new BackendError(err)))
       );
     });
+
+  @Effect()
+  locationUpdate$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.ROUTER_NAVIGATION)
+    .filter((action: any) => {
+      const segments = action.payload.routerState.segments;
+      return segments.length > 0 && segments[0] == 'project';
+    })
+    .switchMap((action: any) => Observable.of(new BreadcrumbChanged(action.payload.routerState.segments)));
 
   constructor(
     private actions$: Actions,

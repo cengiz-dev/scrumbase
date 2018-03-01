@@ -11,8 +11,10 @@ export enum ProjectsActionType {
   SAVE_PROJECT = 'SAVE_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
+  BREADCRUMB_CHANGED = 'BREADCRUMB_CHANGED',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
+  ROUTER_NAVIGATION = 'ROUTER_NAVIGATION',
 }
 
 export class SetProjects implements Action {
@@ -57,6 +59,12 @@ export class AddEpic implements Action {
   constructor(public payload: { project: ProjectRef, epic: Epic }) {}
 }
 
+export class BreadcrumbChanged implements Action {
+  readonly type = ProjectsActionType.BREADCRUMB_CHANGED;
+
+  constructor(public payload: string[]) {}
+}
+
 export class BackendError implements Action {
   readonly type = ProjectsActionType.BACKEND_ERROR;
 
@@ -69,6 +77,12 @@ export class DialogClosed implements Action {
   constructor() {}
 }
 
+export class RouterNavigation implements Action {
+  readonly type = ProjectsActionType.ROUTER_NAVIGATION;
+
+  constructor(public payload: any) {}
+}
+
 export type AllProjectsActions =
   GetProjects |
   SetProjects |
@@ -77,5 +91,7 @@ export type AllProjectsActions =
   SaveProject |
   CancelEdit |
   AddEpic |
+  BreadcrumbChanged |
   BackendError |
-  DialogClosed;
+  DialogClosed |
+  RouterNavigation;

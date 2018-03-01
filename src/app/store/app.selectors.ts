@@ -44,3 +44,8 @@ export const getSelectedProjectIndex = createSelector(
         return result;
     }
 );
+
+export const getBreadcrumbs = createSelector(
+    getProjectsState,
+    (state: ProjectsState) => state.breadcrumbs,
+);

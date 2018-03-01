@@ -11,3 +11,23 @@
 .project-title {
     margin-right: 20px;
 }
+
+.breadcrumb-container {
+    background-color: lightgray;
+    margin: 2px;
+    padding: 8px;
+}
+
+.breadcrumb {
+    margin: 10px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bolder;
+    color: dodgerblue;
+    cursor: pointer;
+}
+
+.breadcrumb-container .breadcrumb + .breadcrumb:before {
+    content: ">";
+    margin-right: 15px;
+}
