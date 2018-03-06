@@ -64,7 +64,7 @@ export class AddEpic implements Action {
 export class AddFeature implements Action {
   readonly type = ProjectsActionType.ADD_FEATURE;
 
-  constructor(public payload: { project: ProjectRef, epic: Epic, feature: Feature }) {}
+  constructor(public payload: { project: ProjectRef, epicIndex: number, feature: Feature }) {}
 }
 
 export class BreadcrumbChanged implements Action {

@@ -7,7 +7,7 @@ import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
-import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, BreadcrumbChanged } from './app.actions';
+import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, BreadcrumbChanged, AddFeature } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
@@ -55,6 +55,20 @@ export class ProjectsEffects {
       const user$ = this.authService.getUser();
       const dataUpdate$ = user$.pipe(
         mergeMap(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
+    });
+
+  @Effect()
+  addFeature$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.ADD_FEATURE)
+    .switchMap((action: AddFeature) => {
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.addFeature(action.payload.project, action.payload.epicIndex, action.payload.feature, user))
       );
       return dataUpdate$.pipe(
         map(() => new GetProjects()),
