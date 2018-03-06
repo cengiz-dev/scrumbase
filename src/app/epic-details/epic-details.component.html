@@ -32,7 +32,8 @@
 
       <mat-list>
         <h3 mat-subheader>Features</h3>
-        <mat-list-item *ngFor="let feature of viewState.projects[i]?.epics[epicIndex]?.features; let featureIndex = index" (click)="onFeatureSelected(featureIndex)">
+        <mat-list-item *ngFor="let feature of viewState.projects[i]?.epics[epicIndex]?.features; let featureIndex = index"
+          (click)="onFeatureSelected(i, epicIndex, featureIndex)">
           <mat-icon mat-list-icon>folder</mat-icon>
           <h4 mat-line>Title: {{feature.title}}</h4>
           <p mat-line> Description: {{feature.description}} </p>
