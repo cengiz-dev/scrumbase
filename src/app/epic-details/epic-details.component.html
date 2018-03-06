@@ -45,7 +45,7 @@
             Please fill out the feature information and click the add button.
           </mat-panel-description>
 
-          <form (ngSubmit)="onAddFeature(f, viewState.projects[i])" #f="ngForm">
+          <form (ngSubmit)="onAddFeature(f, viewState.projects[i], epicIndex)" #f="ngForm">
             <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
               <input matInput required [(ngModel)]="addedFeature.title" name="title">
               <mat-placeholder>

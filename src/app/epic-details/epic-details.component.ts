@@ -49,8 +49,8 @@ export class EpicDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.CancelEdit());
   }
 
-  onAddFeature(form: NgForm, project: ProjectRef) {
-    // this.store.dispatch(new ProjectsActions.AddFeature({ project: project, epic: { ...this.addedFeature }}));
+  onAddFeature(form: NgForm, project: ProjectRef, epicIndex: number) {
+    this.store.dispatch(new ProjectsActions.AddFeature({ project: project, epicIndex: epicIndex, feature: { ...this.addedFeature }}));
     form.resetForm();
     this.addedFeature = new Feature('');
     this.addFeaturePanelOpenState = false;

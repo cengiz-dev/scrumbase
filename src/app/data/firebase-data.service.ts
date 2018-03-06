@@ -58,6 +58,9 @@ export class FirebaseDataService extends DataService {
     } else {
       throw "Epic index out of bounds. Can't add feature."
     }
+    if (!epic.features) {
+      epic.features = new Array<Feature>();
+    }
     epic.features.push(feature);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
