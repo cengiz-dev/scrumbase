@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 
 import { Project, ProjectRef } from '../model/project.model';
 import { Epic } from '../model/epic.model';
+import { Feature } from '../model/feature.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
@@ -11,6 +12,7 @@ export enum ProjectsActionType {
   SAVE_PROJECT = 'SAVE_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
+  ADD_FEATURE = 'ADD_FEATURE',
   BREADCRUMB_CHANGED = 'BREADCRUMB_CHANGED',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
@@ -59,6 +61,12 @@ export class AddEpic implements Action {
   constructor(public payload: { project: ProjectRef, epic: Epic }) {}
 }
 
+export class AddFeature implements Action {
+  readonly type = ProjectsActionType.ADD_FEATURE;
+
+  constructor(public payload: { project: ProjectRef, epic: Epic, feature: Feature }) {}
+}
+
 export class BreadcrumbChanged implements Action {
   readonly type = ProjectsActionType.BREADCRUMB_CHANGED;
 
@@ -91,6 +99,7 @@ export type AllProjectsActions =
   SaveProject |
   CancelEdit |
   AddEpic |
+  AddFeature |
   BreadcrumbChanged |
   BackendError |
   DialogClosed |

@@ -19,7 +19,6 @@ export class ProjectsEffects {
     .ofType(ProjectsActionType.GET_PROJECTS)
     .switchMap((action: GetProjects) => this.dataService.getProjects())
     .map(projects => new SetProjects(projects));
-  // .map(projects => ({ type: ProjectsActionType.SET_PROJECTS, payload: projects }));
 
   @Effect()
   createProject$: Observable<AllProjectsActions> = this.actions$
