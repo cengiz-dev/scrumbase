@@ -24,10 +24,17 @@
     font-size: 14px;
     font-weight: bolder;
     color: dodgerblue;
-    cursor: pointer;
 }
 
 .breadcrumb-container .breadcrumb + .breadcrumb:before {
     content: ">";
     margin-right: 15px;
+}
+
+.breadcrumb:not(:last-child) {
+    cursor: pointer;
+}
+
+.breadcrumb:last-child {
+    color: black;
 }
