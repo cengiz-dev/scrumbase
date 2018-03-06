@@ -8,6 +8,7 @@ import { DataService } from './data.service';
 import { User } from '../model/user.model';
 import { Epic } from '../model/epic.model';
 import './observable.from-thenable';
+import { Feature } from '../model/feature.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -40,12 +41,24 @@ export class FirebaseDataService extends DataService {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(project.id, { ...project });
   }
-  
-  addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void>  {
+
+  addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void> {
     if (!project.epics) {
       project.epics = new Array<Epic>();
     }
     project.epics.push(epic);
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+  }
+
+  addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
+    let epic: Epic;
+    if (project.epics && epicIndex < project.epics.length) {
+      epic = project.epics[epicIndex];
+    } else {
+      throw "Epic index out of bounds. Can't add feature."
+    }
+    epic.features.push(feature);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }

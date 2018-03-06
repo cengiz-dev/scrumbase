@@ -8,6 +8,7 @@ import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';
 import { User } from '../model/user.model';
 import { Epic } from '../model/epic.model';
+import { Feature } from '../model/feature.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -69,6 +70,12 @@ export abstract class DataService {
         return this.addEpicInBackend(project, epic, user);
     }
 
+    public addFeature(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
+        this.lastRefresh = 0;
+
+        return this.addFeatureInBackend(project, epicIndex, feature, user);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -84,5 +91,7 @@ export abstract class DataService {
 
     protected abstract updateProjectInBackend(project: ProjectRef, user: User): Promise<void>;
 
-    protected abstract addEpicInBackend(project: ProjectRef, epic: Epic, user: User);
+    protected abstract addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void>;
+
+    protected abstract addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void>;
 }
