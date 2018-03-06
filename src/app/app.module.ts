@@ -34,6 +34,7 @@ import { environment } from '../environments/environment';
 import { AuthModule } from './auth/auth.module';
 import { EpicDetailsComponent } from './epic-details/epic-details.component';
 import { ProjectComponent } from './project/project.component';
+import { FeatureDetailsComponent } from './feature-details/feature-details.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { ProjectComponent } from './project/project.component';
     HomeComponent,
     EpicDetailsComponent,
     ProjectComponent,
+    FeatureDetailsComponent,
   ],
   imports: [
     BrowserModule,
