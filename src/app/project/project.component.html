@@ -17,7 +17,7 @@
 </mat-toolbar>
 <ng-container *ngIf="(routerState$ | async) as routerState">
   <div class="breadcrumb-container" *ngIf="(breadcrumbs$ | async) as breadcrumbs">
-    <span class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs; let i=index" (click)="onBreadcrumbClick(breadcrumb, i, routerState)">{{ breadcrumb | titlecase }}</span>
+    <span class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs; let i=index" (click)="onBreadcrumbClick(i, routerState)">{{ breadcrumb | titlecase }}</span>
   </div>
 </ng-container>
 <router-outlet></router-outlet>
