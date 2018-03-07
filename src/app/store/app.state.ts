@@ -3,16 +3,20 @@ import { RouterReducerState, RouterStateSerializer } from '@ngrx/router-store';
 
 import { Project } from '../model/project.model';
 
+export interface AppUrlSegment {
+    name: string;
+    index: string;
+}
+
 export interface RouterStateUrl {
     url: string;
     queryParams: Params;
     params: Params;
-    segments: string[];
+    segments: AppUrlSegment[];
 }
 
 export interface ProjectsState {
     projects: Project[],
-    breadcrumbs: string[],
     editMode: boolean,
     backendError: { code: string, message: string },
 }
@@ -27,13 +31,13 @@ export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
         const { url } = routerState;
         const { queryParams } = routerState.root;
         let params: any;
-        let segments = new Array<string>();
+        let segments = new Array<AppUrlSegment>();
         let state: ActivatedRouteSnapshot = routerState.root;
         while (state.firstChild) {
             state = state.firstChild;
             params = { ...params, ...state.params };
-            if (state.url.length > 0) {
-                segments.push(state.url[0].path);
+            for (let i = 0; i+1 < state.url.length; i += 2) {
+                segments.push({ name: state.url[i].path, index: state.url[i+1].path });
             }
         }
 

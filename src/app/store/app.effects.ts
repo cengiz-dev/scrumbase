@@ -7,7 +7,7 @@ import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
-import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, BreadcrumbChanged, AddFeature } from './app.actions';
+import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, AddFeature } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
@@ -75,15 +75,6 @@ export class ProjectsEffects {
         catchError(err => of(new BackendError(err)))
       );
     });
-
-  @Effect()
-  locationUpdate$: Observable<AllProjectsActions> = this.actions$
-    .ofType(ProjectsActionType.ROUTER_NAVIGATION)
-    .filter((action: any) => {
-      const segments = action.payload.routerState.segments;
-      return segments.length > 0 && segments[0] == 'project';
-    })
-    .switchMap((action: any) => Observable.of(new BreadcrumbChanged(action.payload.routerState.segments)));
 
   constructor(
     private actions$: Actions,

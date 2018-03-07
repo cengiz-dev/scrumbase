@@ -46,6 +46,6 @@ export const getSelectedProjectIndex = createSelector(
 );
 
 export const getBreadcrumbs = createSelector(
-    getProjectsState,
-    (state: ProjectsState) => state.breadcrumbs,
+    getRouterState,
+    (routerState: RouterReducerState<RouterStateUrl>) => routerState.state.segments,
 );

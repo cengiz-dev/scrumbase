@@ -12,7 +12,6 @@ export const reducers: ActionReducerMap<AppState, AllProjectsActions | RouterAct
 
 const initialState: ProjectsState = {
   projects: [],
-  breadcrumbs: [],
   editMode: false,
   backendError: undefined,
 };
@@ -53,11 +52,6 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
       return {
         ...state,
         editMode: false,
-      };
-    case ProjectsActionType.BREADCRUMB_CHANGED:
-      return {
-        ...state,
-        breadcrumbs: action.payload,
       };
     default:
       return state;

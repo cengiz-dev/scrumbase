@@ -13,7 +13,6 @@ export enum ProjectsActionType {
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
   ADD_FEATURE = 'ADD_FEATURE',
-  BREADCRUMB_CHANGED = 'BREADCRUMB_CHANGED',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
   ROUTER_NAVIGATION = 'ROUTER_NAVIGATION',
@@ -67,12 +66,6 @@ export class AddFeature implements Action {
   constructor(public payload: { project: ProjectRef, epicIndex: number, feature: Feature }) {}
 }
 
-export class BreadcrumbChanged implements Action {
-  readonly type = ProjectsActionType.BREADCRUMB_CHANGED;
-
-  constructor(public payload: string[]) {}
-}
-
 export class BackendError implements Action {
   readonly type = ProjectsActionType.BACKEND_ERROR;
 
@@ -100,7 +93,6 @@ export type AllProjectsActions =
   CancelEdit |
   AddEpic |
   AddFeature |
-  BreadcrumbChanged |
   BackendError |
   DialogClosed |
   RouterNavigation;
