@@ -9,6 +9,7 @@ import { User } from '../model/user.model';
 import { Epic } from '../model/epic.model';
 import './observable.from-thenable';
 import { Feature } from '../model/feature.model';
+import { Task } from '../model/task.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -62,6 +63,21 @@ export class FirebaseDataService extends DataService {
       epic.features = new Array<Feature>();
     }
     epic.features.push(feature);
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+  }
+
+  addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void> {
+    let feature: Feature;
+    if (project.epics && epicIndex < project.epics.length && project.epics[epicIndex].features && featureIndex < project.epics[epicIndex].features.length) {
+      feature = project.epics[epicIndex].features[featureIndex];
+    } else {
+      throw "Epic or feature index out of bounds. Can't add task."
+    }
+    if (!feature.tasks) {
+      feature.tasks = new Array<Task>();
+    }
+    feature.tasks.push(task);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
