@@ -3,6 +3,7 @@ import { Action } from '@ngrx/store';
 import { Project, ProjectRef } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
+import { Task } from '../model/task.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
@@ -13,6 +14,7 @@ export enum ProjectsActionType {
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
   ADD_FEATURE = 'ADD_FEATURE',
+  ADD_TASK = 'ADD_TASK',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
   ROUTER_NAVIGATION = 'ROUTER_NAVIGATION',
@@ -66,6 +68,12 @@ export class AddFeature implements Action {
   constructor(public payload: { project: ProjectRef, epicIndex: number, feature: Feature }) {}
 }
 
+export class AddTask implements Action {
+  readonly type = ProjectsActionType.ADD_TASK;
+
+  constructor(public payload: { project: ProjectRef, epicIndex: number, featureIndex: number, task: Task }) {}
+}
+
 export class BackendError implements Action {
   readonly type = ProjectsActionType.BACKEND_ERROR;
 
@@ -93,6 +101,7 @@ export type AllProjectsActions =
   CancelEdit |
   AddEpic |
   AddFeature |
+  AddTask |
   BackendError |
   DialogClosed |
   RouterNavigation;
