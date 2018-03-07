@@ -1,3 +1,79 @@
-<p>
-  feature-details works!
-</p>
+<ng-container *ngIf="(state$ | async) as viewState">
+  <ng-container *ngIf="(index$ | async) as i">
+    <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
+      <ng-container *ngIf="(featureIndex$ | async) as featureIndex">
+        <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveEpic(f, viewState.projects[i], viewState.projects[i]?.epics[epicIndex]?.features[featureIndex])"
+          #f="ngForm">
+          <mat-form-field>
+            <mat-label>title</mat-label>
+            <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.title">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>description</mat-label>
+            <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+              [ngModel]="viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.description"></textarea>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button color="primary" type="submit">Save</button>
+            <button mat-raised-button color="primary" (click)="onCancelEditFeature()">Cancel</button>
+          </div>
+        </form>
+        <ng-template #viewMode>
+          <div class="data-line">
+            <span class="data data-label">title:</span>
+            &nbsp;
+            <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.title }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">description:</span>
+            &nbsp;
+            <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.description }}</span>
+          </div>
+          <button mat-raised-button color="primary" (click)="onEditFeature(viewState.projects[i]?.epics[epicIndex]?.features[featureIndex])">Edit</button>
+        </ng-template>
+
+        <mat-list>
+          <h3 mat-subheader>Tasks</h3>
+          <mat-list-item *ngFor="let task of viewState.projects[i]?.epics[epicIndex]?.features[featureIndex].tasks; let taskIndex = index" (click)="onTaskSelected(i, epicIndex, featureIndex, taskIndex)">
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <h4 mat-line>Title: {{task.title}}</h4>
+            <p mat-line> Description: {{task.description}} </p>
+          </mat-list-item>
+          <mat-expansion-panel (opened)="addTaskPanelOpenState = true" (closed)="addTaskPanelOpenState = false" [expanded]="addTaskPanelOpenState">
+            <mat-expansion-panel-header>
+              Add Task
+            </mat-expansion-panel-header>
+            <mat-panel-description *ngIf="addTaskPanelOpenState">
+              Please fill out the task information and click the add button.
+            </mat-panel-description>
+
+            <form (ngSubmit)="onAddTask(f, viewState.projects[i], epicIndex, featureIndex)" #f="ngForm">
+              <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+                <input matInput required [(ngModel)]="addedTask.title" name="title">
+                <mat-placeholder>
+                  <mat-icon>edit</mat-icon>
+                  <b>Task Title</b>
+                </mat-placeholder>
+              </mat-form-field>
+
+              <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+                <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" [(ngModel)]="addedTask.description"
+                  name="description"></textarea>
+                <mat-placeholder>
+                  <mat-icon>edit</mat-icon>
+                  <b>Task Description</b>
+                </mat-placeholder>
+              </mat-form-field>
+
+              <mat-action-row>
+                <button mat-icon-button color="primary" title="add task" type="submit" [disabled]="!f.valid">
+                  <mat-icon aria-label="Add task button">add</mat-icon>
+                </button>
+              </mat-action-row>
+            </form>
+          </mat-expansion-panel>
+        </mat-list>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>

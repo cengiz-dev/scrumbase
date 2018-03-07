@@ -16,5 +16,5 @@ export class Task {
     // assignedTo
     // sprints ?
 
-    constructor(public taskType: TaskType, public title: string) { }
+    constructor(public title: string) { }
 }
