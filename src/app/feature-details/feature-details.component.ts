@@ -39,12 +39,13 @@ export class FeatureDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.EditProject(project));
   }
 
-  onSaveFeature(form: NgForm, project: ProjectRef) {
+  onSaveFeature(form: NgForm, project: ProjectRef, epicIndex: number, featureIndex: number) {
     const value = form.value;
-    let projectRef = new ProjectRef(project.id, value.title);
-    projectRef.description = value.description;
-    projectRef.settings.priorityScheme = value.priorityScheme;
-    projectRef.settings.pointScheme = value.pointScheme;
+    let editedFeature = { ...project.epics[epicIndex].features[featureIndex] };
+    editedFeature.title = value.title;
+    editedFeature.description = value.description;
+    let projectRef = { ...project };
+    projectRef.epics[epicIndex].features[featureIndex] = editedFeature;
     this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
   }
 

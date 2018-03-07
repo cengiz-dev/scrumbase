@@ -1,7 +1,7 @@
 <ng-container *ngIf="(state$ | async) as viewState">
   <ng-container *ngIf="(index$ | async) as i">
     <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
-      <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveEpic(f, viewState.projects[i], viewState.projects[i]?.epics[epicIndex])" #f="ngForm">
+      <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveEpic(f, viewState.projects[i], epicIndex)" #f="ngForm">
         <mat-form-field>
           <mat-label>title</mat-label>
           <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.epics[epicIndex]?.title">

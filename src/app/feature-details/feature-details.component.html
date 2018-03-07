@@ -2,7 +2,7 @@
   <ng-container *ngIf="(index$ | async) as i">
     <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
       <ng-container *ngIf="(featureIndex$ | async) as featureIndex">
-        <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveEpic(f, viewState.projects[i], viewState.projects[i]?.epics[epicIndex]?.features[featureIndex])"
+        <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveFeature(f, viewState.projects[i], epicIndex, featureIndex)"
           #f="ngForm">
           <mat-form-field>
             <mat-label>title</mat-label>
