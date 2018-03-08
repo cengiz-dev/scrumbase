@@ -35,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
 import { EpicDetailsComponent } from './epic-details/epic-details.component';
 import { ProjectComponent } from './project/project.component';
 import { FeatureDetailsComponent } from './feature-details/feature-details.component';
+import { TaskDetailsComponent } from './task-details/task-details.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { FeatureDetailsComponent } from './feature-details/feature-details.compo
     EpicDetailsComponent,
     ProjectComponent,
     FeatureDetailsComponent,
+    TaskDetailsComponent,
   ],
   imports: [
     BrowserModule,
