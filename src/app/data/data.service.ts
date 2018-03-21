@@ -71,6 +71,12 @@ export abstract class DataService {
         return this.addEpicInBackend(project, epic, user);
     }
 
+    public updateEpic(project: ProjectRef, epicIndex: number, user: User): Promise<void> {
+        this.lastRefresh = 0;
+
+        return this.updateEpicInBackend(project, epicIndex, user);
+    }
+
     public addFeature(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
         this.lastRefresh = 0;
 
@@ -99,6 +105,8 @@ export abstract class DataService {
     protected abstract updateProjectInBackend(project: ProjectRef, user: User): Promise<void>;
 
     protected abstract addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void>;
+
+    protected abstract updateEpicInBackend(project: ProjectRef, epicIndex: number, user: User): Promise<void>;
 
     protected abstract addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void>;
 

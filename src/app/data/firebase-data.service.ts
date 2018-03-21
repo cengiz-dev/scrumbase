@@ -52,6 +52,19 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
 
+  updateEpicInBackend(project: ProjectRef, epicIndex: number, user: User): Promise<void> {
+    let epic: Epic;
+    if (project.epics && epicIndex < project.epics.length) {
+      epic = project.epics[epicIndex];
+    } else {
+      throw "Epic index out of bounds. Can't update epic."
+    }
+    epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    epic.lastUpdatedBy = user;
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return projects.update(project.id, { epics: project.epics });
+  }
+
   addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
     let epic: Epic;
     if (project.epics && epicIndex < project.epics.length) {
