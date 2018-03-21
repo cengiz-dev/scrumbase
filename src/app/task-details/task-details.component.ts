@@ -48,7 +48,7 @@ export class TaskDetailsComponent implements OnInit {
     editedTask.description = value.description;
     let projectRef = { ...project };
     projectRef.epics[epicIndex].features[featureIndex].tasks[taskIndex] = editedTask;
-    this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
+    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
   }
 
   onCancelEditTask() {

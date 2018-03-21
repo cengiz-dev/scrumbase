@@ -43,7 +43,7 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
         ...state,
         editMode: true,
       };
-    case ProjectsActionType.SAVE_PROJECT:
+    case ProjectsActionType.UPDATE_PROJECT:
       return {
         ...state,
         editMode: false,

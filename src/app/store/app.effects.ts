@@ -7,7 +7,18 @@ import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/do';
 
 import { DataService } from '../data/data.service';
-import { GetProjects, CreateProject, SaveProject, ProjectsActionType, AddEpic, BackendError, AllProjectsActions, SetProjects, AddFeature, AddTask } from './app.actions';
+import {
+  GetProjects,
+  CreateProject,
+  UpdateProject,
+  ProjectsActionType,
+  AddEpic,
+  BackendError,
+  AllProjectsActions,
+  SetProjects,
+  AddFeature,
+  AddTask
+} from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
@@ -35,8 +46,8 @@ export class ProjectsEffects {
 
   @Effect()
   updateProject$: Observable<AllProjectsActions> = this.actions$.pipe(
-    ofType(ProjectsActionType.SAVE_PROJECT),
-    mergeMap((action: SaveProject) => {
+    ofType(ProjectsActionType.UPDATE_PROJECT),
+    mergeMap((action: UpdateProject) => {
       const user$ = this.authService.getUser();
       const dataUpdate$ = user$.pipe(
         mergeMap(user => this.dataService.updateProject(action.payload, user))
@@ -76,20 +87,20 @@ export class ProjectsEffects {
       );
     });
 
-    @Effect()
-    addTask$: Observable<AllProjectsActions> = this.actions$
-      .ofType(ProjectsActionType.ADD_TASK)
-      .switchMap((action: AddTask) => {
-        const user$ = this.authService.getUser();
-        const dataUpdate$ = user$.pipe(
-          mergeMap(user => this.dataService.addTask(action.payload.project, action.payload.epicIndex, action.payload.featureIndex,
-            action.payload.task, user))
-        );
-        return dataUpdate$.pipe(
-          map(() => new GetProjects()),
-          catchError(err => of(new BackendError(err)))
-        );
-      });
+  @Effect()
+  addTask$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.ADD_TASK)
+    .switchMap((action: AddTask) => {
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.addTask(action.payload.project, action.payload.epicIndex, action.payload.featureIndex,
+          action.payload.task, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
+    });
 
   constructor(
     private actions$: Actions,

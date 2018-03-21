@@ -46,7 +46,7 @@ export class FeatureDetailsComponent implements OnInit {
     editedFeature.description = value.description;
     let projectRef = { ...project };
     projectRef.epics[epicIndex].features[featureIndex] = editedFeature;
-    this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
+    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
   }
 
   onCancelEditFeature() {

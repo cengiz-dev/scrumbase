@@ -44,7 +44,7 @@ export class ProjectDetailsComponent implements OnInit {
     projectRef.description = value.description;
     projectRef.settings.priorityScheme = value.priorityScheme;
     projectRef.settings.pointScheme = value.pointScheme;
-    this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
+    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
   }
 
   onCancelEditProject() {

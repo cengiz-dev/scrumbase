@@ -9,8 +9,8 @@ export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
   GET_PROJECTS = 'GET_PROJECTS',
   CREATE_PROJECT = 'CREATE_PROJECT',
+  UPDATE_PROJECT = 'UPDATE_PROJECT',
   EDIT_PROJECT = 'EDIT_PROJECT',
-  SAVE_PROJECT = 'SAVE_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
   ADD_FEATURE = 'ADD_FEATURE',
@@ -44,8 +44,8 @@ export class EditProject implements Action {
   constructor(public payload: ProjectRef) {}
 }
 
-export class SaveProject implements Action {
-  readonly type = ProjectsActionType.SAVE_PROJECT;
+export class UpdateProject implements Action {
+  readonly type = ProjectsActionType.UPDATE_PROJECT;
 
   constructor(public payload: ProjectRef) {}
 }
@@ -96,8 +96,8 @@ export type AllProjectsActions =
   GetProjects |
   SetProjects |
   CreateProject |
+  UpdateProject |
   EditProject |
-  SaveProject |
   CancelEdit |
   AddEpic |
   AddFeature |

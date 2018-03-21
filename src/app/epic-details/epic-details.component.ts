@@ -43,7 +43,7 @@ export class EpicDetailsComponent implements OnInit {
     editedEpic.description = value.description;
     let projectRef = { ...project };
     projectRef.epics[epicIndex] = editedEpic;
-    this.store.dispatch(new ProjectsActions.SaveProject(projectRef));
+    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
   }
 
   onCancelEditEpic() {
