@@ -36,14 +36,16 @@ export class EpicDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.EditProject(project));
   }
 
-  onSaveEpic(form: NgForm, project: ProjectRef, epicIndex: number) {
+  onSaveEpic(form: NgForm, projectRef: ProjectRef, epicIndex: number) {
     const value = form.value;
-    let editedEpic = { ...project.epics[epicIndex] };
-    editedEpic.title = value.title;
-    editedEpic.description = value.description;
-    let projectRef = { ...project };
-    projectRef.epics[epicIndex] = editedEpic;
-    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
+    let updatedEpic = { ...projectRef.epics[epicIndex] };
+    updatedEpic.title = value.title;
+    updatedEpic.description = value.description;
+    this.store.dispatch(new ProjectsActions.UpdateEpic({
+      project: projectRef,
+      updatedEpic: updatedEpic,
+      epicIndex: epicIndex
+    }));
   }
 
   onCancelEditEpic() {

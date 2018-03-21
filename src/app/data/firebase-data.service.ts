@@ -52,10 +52,12 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
 
-  updateEpicInBackend(project: ProjectRef, epicIndex: number, user: User): Promise<void> {
+  updateEpicInBackend(project: ProjectRef, updatedEpic: Epic, epicIndex: number, user: User): Promise<void> {
     let epic: Epic;
     if (project.epics && epicIndex < project.epics.length) {
-      epic = project.epics[epicIndex];
+      epic = project.epics[epicIndex] = {
+        ...updatedEpic
+      };
     } else {
       throw "Epic index out of bounds. Can't update epic."
     }

@@ -44,6 +44,7 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
         editMode: true,
       };
     case ProjectsActionType.UPDATE_PROJECT:
+    case ProjectsActionType.UPDATE_EPIC:
       return {
         ...state,
         editMode: false,

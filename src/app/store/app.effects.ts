@@ -17,7 +17,8 @@ import {
   AllProjectsActions,
   SetProjects,
   AddFeature,
-  AddTask
+  AddTask,
+  UpdateEpic
 } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
@@ -72,6 +73,21 @@ export class ProjectsEffects {
         catchError(err => of(new BackendError(err)))
       );
     });
+
+  @Effect()
+  updateEpic$: Observable<AllProjectsActions> = this.actions$.pipe(
+    ofType(ProjectsActionType.UPDATE_EPIC),
+    mergeMap((action: UpdateEpic) => {
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.updateEpic(action.payload.project, action.payload.updatedEpic, action.payload.epicIndex, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
+    })
+  );
 
   @Effect()
   addFeature$: Observable<AllProjectsActions> = this.actions$
