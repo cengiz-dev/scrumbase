@@ -13,6 +13,7 @@ export enum ProjectsActionType {
   EDIT_PROJECT = 'EDIT_PROJECT',
   CANCEL_EDIT = 'CANCEL_EDIT',
   ADD_EPIC = 'ADD_EPIC',
+  UPDATE_EPIC = 'UPDATE_EPIC',
   ADD_FEATURE = 'ADD_FEATURE',
   ADD_TASK = 'ADD_TASK',
   BACKEND_ERROR = 'BACKEND_ERROR',
@@ -62,6 +63,12 @@ export class AddEpic implements Action {
   constructor(public payload: { project: ProjectRef, epic: Epic }) {}
 }
 
+export class UpdateEpic implements Action {
+  readonly type = ProjectsActionType.UPDATE_EPIC;
+
+  constructor(public payload: { project: ProjectRef, updatedEpic: Epic, epicIndex: number }) {}
+}
+
 export class AddFeature implements Action {
   readonly type = ProjectsActionType.ADD_FEATURE;
 
@@ -100,6 +107,7 @@ export type AllProjectsActions =
   EditProject |
   CancelEdit |
   AddEpic |
+  UpdateEpic |
   AddFeature |
   AddTask |
   BackendError |
