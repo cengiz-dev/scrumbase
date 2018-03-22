@@ -86,12 +86,29 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.id, { epics: project.epics });
   }
 
+  updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void> {
+    let feature: Feature;
+    if (!project.epics || epicIndex >= project.epics.length) {
+      throw "Epic index out of bounds. Can't update feature.";
+    } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
+      throw "Feature index out of bounds. Can't update feature.";
+    } else {
+      feature = project.epics[epicIndex].features[featureIndex];
+    }
+    feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    feature.lastUpdatedBy = user;
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return projects.update(project.id, { epics: project.epics });
+  }
+
   addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void> {
     let feature: Feature;
-    if (project.epics && epicIndex < project.epics.length && project.epics[epicIndex].features && featureIndex < project.epics[epicIndex].features.length) {
-      feature = project.epics[epicIndex].features[featureIndex];
+    if (!project.epics || epicIndex >= project.epics.length) {
+      throw "Epic index out of bounds. Can't add task.";
+    } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
+      throw "Feature index out of bounds. Can't add task.";
     } else {
-      throw "Epic or feature index out of bounds. Can't add task.";
+      feature = project.epics[epicIndex].features[featureIndex];
     }
     if (!feature.tasks) {
       feature.tasks = new Array<Task>();
