@@ -5,6 +5,7 @@ export class Epic {
     public description: string;
     public features: Feature[];
     public createdOn: any;
+    public createdBy: User;
     public lastUpdatedOn: any;
     public lastUpdatedBy: User;
 
