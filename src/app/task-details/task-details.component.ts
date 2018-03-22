@@ -43,12 +43,10 @@ export class TaskDetailsComponent implements OnInit {
 
   onSaveTask(form: NgForm, project: ProjectRef, epicIndex: number, featureIndex: number, taskIndex: number) {
     const value = form.value;
-    let editedTask = { ...project.epics[epicIndex].features[featureIndex].tasks[taskIndex] };
-    editedTask.title = value.title;
-    editedTask.description = value.description;
-    let projectRef = { ...project };
-    projectRef.epics[epicIndex].features[featureIndex].tasks[taskIndex] = editedTask;
-    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
+    let updatedTask = { ...project.epics[epicIndex].features[featureIndex].tasks[taskIndex] };
+    updatedTask.title = value.title;
+    updatedTask.description = value.description;
+    this.store.dispatch(new ProjectsActions.UpdateTask({ project, updatedTask, epicIndex, featureIndex, taskIndex }));
   }
 
   onCancelEditTask() {
