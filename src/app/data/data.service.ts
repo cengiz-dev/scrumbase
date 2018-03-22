@@ -95,6 +95,12 @@ export abstract class DataService {
         return this.addTaskInBackend(project, epicIndex, featureIndex, task, user);
     }
 
+    public updateTask(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number, taskIndex: number, user: User): Promise<void> {
+        this.lastRefresh = 0;
+
+        return this.updateTaskInBackend(project, updatedTask, epicIndex, featureIndex, taskIndex, user);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -119,4 +125,7 @@ export abstract class DataService {
     protected abstract updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void>;
 
     protected abstract addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void>;
+
+    protected abstract updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
+        taskIndex: number, user: User): Promise<void>;
 }
