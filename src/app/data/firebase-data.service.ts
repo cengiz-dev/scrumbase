@@ -93,7 +93,9 @@ export class FirebaseDataService extends DataService {
     } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
       throw "Feature index out of bounds. Can't update feature.";
     } else {
-      feature = project.epics[epicIndex].features[featureIndex];
+      feature = project.epics[epicIndex].features[featureIndex] = {
+        ...updatedFeature
+      };
     }
     feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.lastUpdatedBy = user;
