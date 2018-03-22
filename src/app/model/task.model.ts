@@ -1,6 +1,7 @@
 import { TaskType } from "./task-type.model";
 import { TaskStatus } from "./task-status.model";
 import { TaskPriority } from "./task-priority.model";
+import { User } from "./user.model";
 
 export class Task {
     public description: string;
@@ -9,10 +10,11 @@ export class Task {
     public status: TaskStatus;
     public subTasks: Task[];
     public createdOn: any;
+    public createdBy: User;
     public lastUpdatedOn: any;
+    public lastUpdatedBy: User;
 
     // TODO:
-    // createdBy
     // assignedTo
     // sprints ?
 

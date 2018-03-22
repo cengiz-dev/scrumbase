@@ -94,8 +94,10 @@ export class FirebaseDataService extends DataService {
     if (!feature.tasks) {
       feature.tasks = new Array<Task>();
     }
+    task.createdOn = task.lastUpdatedOn = feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    task.createdBy = task.lastUpdatedBy = feature.lastUpdatedBy = user;
     feature.tasks.push(task);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+    return projects.update(project.id, { epics: project.epics });
   }
 }
