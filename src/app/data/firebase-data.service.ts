@@ -47,8 +47,8 @@ export class FirebaseDataService extends DataService {
     if (!project.epics) {
       project.epics = new Array<Epic>();
     }
-    epic.createdOn = database.ServerValue.TIMESTAMP;
-    epic.createdBy = user;
+    epic.createdOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    epic.createdBy = epic.lastUpdatedBy = user;
     project.epics.push(epic);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
