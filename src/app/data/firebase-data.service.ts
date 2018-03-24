@@ -3,13 +3,13 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { database } from 'firebase';
 import { Observable } from 'rxjs/Observable';
 
-import { Project, ProjectRef } from '../model/project.model';
 import { DataService } from './data.service';
-import { User } from '../model/user.model';
-import { Epic } from '../model/epic.model';
 import './observable.from-thenable';
+import { User } from '../model/user.model';
+import { Project, ProjectRef } from '../model/project.model';
+import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
-import { Task } from '../model/task.model';
+import { Task, TaskSummary } from '../model/task.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -103,7 +103,19 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.id, { epics: project.epics });
   }
 
-  addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void> {
+  getTaskFromBackend(key: string): Observable<Task | null> {
+    return this.db.list(Task.COLLECTION_NAME, ref => ref.equalTo(null, key)).snapshotChanges()
+      .map(actions => {
+        return actions.map(a => {
+          const data = a.payload.val() as Task;
+          data.key = a.payload.key;
+          return data;
+        });
+      })
+      .map(v => v && v.length > 0? v[0] : null);
+  }
+
+  addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
     let feature: Feature;
     if (!project.epics || epicIndex >= project.epics.length) {
       throw "Epic index out of bounds. Can't add task.";
@@ -119,12 +131,16 @@ export class FirebaseDataService extends DataService {
     task.createdBy = task.lastUpdatedBy = feature.lastUpdatedBy = user;
     feature.tasks.push(task);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { epics: project.epics });
+    return Observable.fromPromise(this.db.list(Task.COLLECTION_NAME).push(task).then(addedTask => {
+      task.key = addedTask.key;
+      projects.update(project.id, { epics: project.epics });
+    }));
   }
 
   updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
-      taskIndex: number, user: User): Promise<void> {
+      taskIndex: number, user: User): Observable<any> {
     let task: Task;
+    let updatedTaskSummary: TaskSummary = updatedTask;
     if (!project.epics || epicIndex >= project.epics.length) {
       throw "Epic index out of bounds. Can't update task.";
     } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
@@ -132,13 +148,18 @@ export class FirebaseDataService extends DataService {
     } else if (!project.epics[epicIndex].features[featureIndex].tasks || taskIndex >= project.epics[epicIndex].features[featureIndex].tasks.length) {
       throw "Task index out of bounds. Can't update task.";
     } else {
-      task = project.epics[epicIndex].features[featureIndex].tasks[taskIndex] = {
-        ...updatedTask
+      project.epics[epicIndex].features[featureIndex].tasks[taskIndex] = {
+        ...updatedTaskSummary
       };
     }
+    task = {
+      ...updatedTask
+    };
     task.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     task.lastUpdatedBy = user;
+    const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { epics: project.epics });
+    return Observable.fromPromise(tasks.update(task.key, { ...task }))
+        .merge(projects.update(project.id, { epics: project.epics }));
   }
 }

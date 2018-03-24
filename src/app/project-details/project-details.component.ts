@@ -35,7 +35,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onEditProject(project: ProjectRef) {
-    this.store.dispatch(new ProjectsActions.EditProject(project));
+    this.store.dispatch(new ProjectsActions.SwitchEditMode(true));
   }
 
   onSaveProject(form: NgForm, project: ProjectRef) {

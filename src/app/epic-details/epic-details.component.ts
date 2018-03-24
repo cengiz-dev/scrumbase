@@ -33,7 +33,7 @@ export class EpicDetailsComponent implements OnInit {
   }
 
   onEditEpic(project: ProjectRef) {
-    this.store.dispatch(new ProjectsActions.EditProject(project));
+    this.store.dispatch(new ProjectsActions.SwitchEditMode(true));
   }
 
   onSaveEpic(form: NgForm, projectRef: ProjectRef, epicIndex: number) {

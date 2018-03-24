@@ -21,6 +21,8 @@ import {
   UpdateEpic,
   UpdateFeature,
   UpdateTask,
+  GetTask,
+  SetTask,
 } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
@@ -120,6 +122,12 @@ export class ProjectsEffects {
       );
     })
   );
+
+  @Effect()
+  getTask$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.GET_TASK)
+    .switchMap((action: GetTask) => this.dataService.getTask(action.payload))
+    .map(task => new SetTask(task));
 
   @Effect()
   addTask$: Observable<AllProjectsActions> = this.actions$

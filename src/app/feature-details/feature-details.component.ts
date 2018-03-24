@@ -36,7 +36,7 @@ export class FeatureDetailsComponent implements OnInit {
   }
 
   onEditFeature(project: ProjectRef) {
-    this.store.dispatch(new ProjectsActions.EditProject(project));
+    this.store.dispatch(new ProjectsActions.SwitchEditMode(true));
   }
 
   onSaveFeature(form: NgForm, project: ProjectRef, epicIndex: number, featureIndex: number) {

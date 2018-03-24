@@ -13,6 +13,7 @@ export const reducers: ActionReducerMap<AppState, AllProjectsActions | RouterAct
 const initialState: ProjectsState = {
   projects: [],
   editMode: false,
+  currentTask: undefined,
   backendError: undefined,
 };
 
@@ -38,10 +39,15 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
         ...state,
         projects: [...state.projects, action.payload],
       };
-    case ProjectsActionType.EDIT_PROJECT:
+    case ProjectsActionType.SWITCH_EDIT_MODE:
       return {
         ...state,
-        editMode: true,
+        editMode: action.payload,
+      };
+    case ProjectsActionType.SET_TASK:
+      return {
+        ...state,
+        currentTask: action.payload,
       };
     case ProjectsActionType.UPDATE_PROJECT:
     case ProjectsActionType.UPDATE_EPIC:

@@ -89,13 +89,19 @@ export abstract class DataService {
         return this.updateFeatureInBackend(project, updatedFeature, epicIndex, featureIndex, user);
     }
 
-    public addTask(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void> {
+    public getTask(key: string): Observable<Task | null> {
+        this.lastRefresh = 0;
+
+        return this.getTaskFromBackend(key);
+    }
+
+    public addTask(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
         this.lastRefresh = 0;
 
         return this.addTaskInBackend(project, epicIndex, featureIndex, task, user);
     }
 
-    public updateTask(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number, taskIndex: number, user: User): Promise<void> {
+    public updateTask(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number, taskIndex: number, user: User): Observable<any> {
         this.lastRefresh = 0;
 
         return this.updateTaskInBackend(project, updatedTask, epicIndex, featureIndex, taskIndex, user);
@@ -124,8 +130,10 @@ export abstract class DataService {
 
     protected abstract updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void>;
 
-    protected abstract addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Promise<void>;
+    protected abstract getTaskFromBackend(key: string): Observable<Task | null>;
+
+    protected abstract addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any>;
 
     protected abstract updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
-        taskIndex: number, user: User): Promise<void>;
+        taskIndex: number, user: User): Observable<any>;
 }

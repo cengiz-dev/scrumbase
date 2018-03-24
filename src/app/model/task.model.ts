@@ -4,7 +4,8 @@ import { TaskPriority } from "./task-priority.model";
 import { User } from "./user.model";
 
 export class TaskSummary {
-    public description: string;
+    public key: string;
+    public identifier: string;  // unique identifier ie: FEA-1
     public type: TaskType;
     public createdOn: any;
     public createdBy: User;
@@ -15,6 +16,8 @@ export class TaskSummary {
 }
 
 export class Task extends TaskSummary {
+    public static COLLECTION_NAME = 'tasks';
+    public description: string;
     public points: number;
     public priority: TaskPriority;
     public status: TaskStatus;
@@ -25,13 +28,6 @@ export class Task extends TaskSummary {
     // sprints ?
 
     constructor(title: string) {
-        super(title);
-    }
-}
-
-export class TaskRef extends Task {
-    public static COLLECTION_NAME = 'tasks';
-    constructor(public id: string, public title: string) {
         super(title);
     }
 }

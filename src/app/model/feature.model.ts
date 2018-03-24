@@ -1,9 +1,9 @@
-import { Task } from "./task.model";
+import { TaskSummary } from "./task.model";
 import { User } from "./user.model";
 
 export class Feature {
     public description: string;
-    public tasks: Task[];
+    public tasks: TaskSummary[];
     public createdOn: any;
     public createdBy: User;
     public lastUpdatedOn: any;
