@@ -1,42 +1,36 @@
-<ng-container *ngIf="(state$ | async) as viewState">
-  <ng-container *ngIf="(index$ | async) as i">
-    <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
-      <ng-container *ngIf="(featureIndex$ | async) as featureIndex">
-        <ng-container *ngIf="(taskIndex$ | async) as taskIndex">
-          <ng-container *ngIf="(selectedTaskSummary$ | async) as selectedTaskSummary">
-            <ng-container *ngIf="(currentTask$ | async) as currentTask">
-            <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveTask(f, viewState.projects[i], epicIndex, featureIndex, taskIndex)"
-              #f="ngForm">
-              <mat-form-field>
-                <mat-label>title</mat-label>
-                <input matInput required name="title" placeholder="title" [ngModel]="selectedTaskSummary?.title">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>description</mat-label>
-                <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
-                  [ngModel]="viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.tasks[taskIndex]?.description"></textarea>
-              </mat-form-field>
-              <div>
-                <button mat-raised-button color="primary" type="submit">Save</button>
-                <button mat-raised-button color="primary" (click)="onCancelEditTask()">Cancel</button>
-              </div>
-            </form>
-            <ng-template #viewMode>
-              <div class="data-line">
-                <span class="data data-label">title:</span>
-                &nbsp;
-                <span class="data data-value">{{ selectedTaskSummary?.title }}</span>
-              </div>
-              <div class="data-line">
-                <span class="data data-label">description:</span>
-                &nbsp;
-                <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.tasks[taskIndex]?.description }}</span>
-              </div>
-              <button mat-raised-button color="primary" (click)="onEditTask(viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.tasks[taskIndex])">Edit</button>
-            </ng-template>
-          </ng-container>
-          </ng-container>
-        </ng-container>
+<ng-container *ngIf="(viewState$ | async) as viewState">
+  <ng-container *ngIf="(routeParams$ | async) as routeParams">
+    <ng-container *ngIf="(currentProject$ | async) as currentProject">
+      <ng-container *ngIf="(currentTask$ | async) as currentTask">
+        <form *ngIf="viewState.editMode;else viewMode" #f="ngForm"
+            (ngSubmit)="onSaveTask(f, currentTask, currentProject, routeParams.epicIndex, routeParams.featureIndex, routeParams.taskIndex)">
+          <mat-form-field>
+            <mat-label>title</mat-label>
+            <input matInput required name="title" placeholder="title" [ngModel]="currentTask?.title">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>description</mat-label>
+            <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
+              [ngModel]="currentTask?.description"></textarea>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button color="primary" type="submit">Save</button>
+            <button mat-raised-button color="primary" (click)="onCancelEditTask()">Cancel</button>
+          </div>
+        </form>
+        <ng-template #viewMode>
+          <div class="data-line">
+            <span class="data data-label">title:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.title }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">description:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.description }}</span>
+          </div>
+          <button mat-raised-button color="primary" (click)="onEditTask(currentTask)">Edit</button>
+        </ng-template>
       </ng-container>
     </ng-container>
   </ng-container>

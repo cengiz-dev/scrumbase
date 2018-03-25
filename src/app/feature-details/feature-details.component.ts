@@ -5,9 +5,9 @@ import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { AppState, ProjectsState } from '../store/app.state';
+import { getProjectsState, getRouteParams, getSelectedProject, getSelectedFeature } from '../store/app.selectors';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
-import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
 import { Task } from '../model/task.model';
 
@@ -17,19 +17,19 @@ import { Task } from '../model/task.model';
   styleUrls: ['./feature-details.component.css']
 })
 export class FeatureDetailsComponent implements OnInit {
-  state$: Observable<ProjectsState>;
-  index$: Observable<Params>;
-  epicIndex$: Observable<Params>;
-  featureIndex$: Observable<Params>;
+  viewState$: Observable<ProjectsState>;
+  routeParams$: Observable<Params>;
+  currentProject$: Observable<ProjectRef>;
+  currentFeature$: Observable<Feature>;
   addTaskPanelOpenState: boolean = false;
   addedTask = new Task('');
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
+    this.viewState$ = this.store.select(getProjectsState);
+    this.routeParams$ = this.store.select(getRouteParams);
+    this.currentProject$ = this.store.select(getSelectedProject);
+    this.currentFeature$ = this.store.select(getSelectedFeature);
     this.store.dispatch(new ProjectsActions.GetProjects());
-    this.state$ = this.store.pipe(select('projects'));
-    this.index$ = this.activatedRoute.parent.params.switchMap(params => params['index']);
-    this.epicIndex$ = this.activatedRoute.params.switchMap(params => params['epicIndex']);
-    this.featureIndex$ = this.activatedRoute.params.switchMap(params => params['featureIndex']);
   }
 
   ngOnInit() {

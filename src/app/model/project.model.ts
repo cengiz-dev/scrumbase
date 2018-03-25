@@ -24,7 +24,7 @@ export class Project {
 
 export class ProjectRef extends Project {
     public static COLLECTION_NAME = 'projects';
-    constructor(public id: string, public title: string) {
+    constructor(public key: string, public title: string) {
         super(title);
     }
 }

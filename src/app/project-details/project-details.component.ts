@@ -5,6 +5,7 @@ import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 
 import { AppState, ProjectsState } from '../store/app.state';
+import { getProjectsState, getRouteParams, getSelectedProject } from '../store/app.selectors';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
 import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
@@ -16,8 +17,9 @@ import { Epic } from '../model/epic.model';
   styleUrls: ['./project-details.component.css']
 })
 export class ProjectDetailsComponent implements OnInit {
-  state$: Observable<ProjectsState>;
-  index$: Observable<Params>;
+  viewState$: Observable<ProjectsState>;
+  routeParams$: Observable<Params>;
+  currentProject$: Observable<ProjectRef>;
   prioritySchemeKeys = Object.keys(TaskPriorityScheme);
   prioritySchemeValues = TaskPriorityScheme;
   pointSchemeKeys = Object.keys(TaskPointScheme);
@@ -27,8 +29,9 @@ export class ProjectDetailsComponent implements OnInit {
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
-    this.state$ = this.store.pipe(select('projects'));
-    this.index$ = this.activatedRoute.params.switchMap(params => params['index']);
+    this.viewState$ = this.store.select(getProjectsState);
+    this.routeParams$ = this.store.select(getRouteParams);
+    this.currentProject$ = this.store.select(getSelectedProject);
   }
 
   ngOnInit() {
@@ -40,11 +43,12 @@ export class ProjectDetailsComponent implements OnInit {
 
   onSaveProject(form: NgForm, project: ProjectRef) {
     const value = form.value;
-    let projectRef = new ProjectRef(project.id, value.title);
-    projectRef.description = value.description;
-    projectRef.settings.priorityScheme = value.priorityScheme;
-    projectRef.settings.pointScheme = value.pointScheme;
-    this.store.dispatch(new ProjectsActions.UpdateProject(projectRef));
+    let updatedProject = { ...project };
+    project.title = value.title;
+    updatedProject.description = value.description;
+    updatedProject.settings.priorityScheme = value.priorityScheme;
+    updatedProject.settings.pointScheme = value.pointScheme;
+    this.store.dispatch(new ProjectsActions.UpdateProject(updatedProject));
   }
 
   onCancelEditProject() {

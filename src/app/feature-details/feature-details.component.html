@@ -1,17 +1,16 @@
-<ng-container *ngIf="(state$ | async) as viewState">
-  <ng-container *ngIf="(index$ | async) as i">
-    <ng-container *ngIf="(epicIndex$ | async) as epicIndex">
-      <ng-container *ngIf="(featureIndex$ | async) as featureIndex">
-        <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveFeature(f, viewState.projects[i], epicIndex, featureIndex)"
-          #f="ngForm">
+<ng-container *ngIf="(viewState$ | async) as viewState">
+  <ng-container *ngIf="(routeParams$ | async) as routeParams">
+    <ng-container *ngIf="(currentProject$ | async) as currentProject">
+      <ng-container *ngIf="(currentFeature$ | async) as currentFeature">
+        <form *ngIf="viewState.editMode;else viewMode" #f="ngForm" (ngSubmit)="onSaveFeature(f, currentProject, routeParams.epicIndex, routeParams.featureIndex)">
           <mat-form-field>
             <mat-label>title</mat-label>
-            <input matInput required name="title" placeholder="title" [ngModel]="viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.title">
+            <input matInput required name="title" placeholder="title" [ngModel]="currentFeature?.title">
           </mat-form-field>
           <mat-form-field>
             <mat-label>description</mat-label>
             <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
-              [ngModel]="viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.description"></textarea>
+              [ngModel]="currentFeature?.description"></textarea>
           </mat-form-field>
           <div>
             <button mat-raised-button color="primary" type="submit">Save</button>
@@ -22,19 +21,19 @@
           <div class="data-line">
             <span class="data data-label">title:</span>
             &nbsp;
-            <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.title }}</span>
+            <span class="data data-value">{{ currentFeature?.title }}</span>
           </div>
           <div class="data-line">
             <span class="data data-label">description:</span>
             &nbsp;
-            <span class="data data-value">{{ viewState.projects[i]?.epics[epicIndex]?.features[featureIndex]?.description }}</span>
+            <span class="data data-value">{{ currentFeature?.description }}</span>
           </div>
-          <button mat-raised-button color="primary" (click)="onEditFeature(viewState.projects[i]?.epics[epicIndex]?.features[featureIndex])">Edit</button>
+          <button mat-raised-button color="primary" (click)="onEditFeature(currentFeature)">Edit</button>
         </ng-template>
 
         <mat-list>
           <h3 mat-subheader>Tasks</h3>
-          <mat-list-item *ngFor="let task of viewState.projects[i]?.epics[epicIndex]?.features[featureIndex].tasks; let taskIndex = index" (click)="onTaskSelected(i, epicIndex, featureIndex, taskIndex)">
+          <mat-list-item *ngFor="let task of currentFeature.tasks; let taskIndex = index" (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, routeParams.featureIndex, taskIndex)">
             <mat-icon mat-list-icon>folder</mat-icon>
             <h4 mat-line>Title: {{task.title}}</h4>
             <p mat-line> Description: {{task.description}} </p>
@@ -47,7 +46,7 @@
               Please fill out the task information and click the add button.
             </mat-panel-description>
 
-            <form (ngSubmit)="onAddTask(f, viewState.projects[i], epicIndex, featureIndex)" #f="ngForm">
+            <form (ngSubmit)="onAddTask(f, currentProject, routeParams.epicIndex, routeParams.featureIndex)" #f="ngForm">
               <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
                 <input matInput required [(ngModel)]="addedTask.title" name="title">
                 <mat-placeholder>

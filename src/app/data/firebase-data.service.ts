@@ -22,7 +22,7 @@ export class FirebaseDataService extends DataService {
       .map(actions => {
         return actions.map(a => {
           const data = a.payload.val() as ProjectRef;
-          data.id = a.payload.key;
+          data.key = a.payload.key;
           return data;
         });
       });
@@ -40,7 +40,7 @@ export class FirebaseDataService extends DataService {
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     project.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { ...project });
+    return projects.update(project.key, { ...project });
   }
 
   addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void> {
@@ -51,7 +51,7 @@ export class FirebaseDataService extends DataService {
     epic.createdBy = epic.lastUpdatedBy = user;
     project.epics.push(epic);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+    return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
   }
 
   updateEpicInBackend(project: ProjectRef, updatedEpic: Epic, epicIndex: number, user: User): Promise<void> {
@@ -66,7 +66,7 @@ export class FirebaseDataService extends DataService {
     epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     epic.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { epics: project.epics });
+    return projects.update(project.key, { epics: project.epics });
   }
 
   addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
@@ -83,7 +83,7 @@ export class FirebaseDataService extends DataService {
     feature.createdBy = feature.lastUpdatedBy = epic.lastUpdatedBy = user;
     epic.features.push(feature);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { epics: project.epics });
+    return projects.update(project.key, { epics: project.epics });
   }
 
   updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void> {
@@ -100,7 +100,7 @@ export class FirebaseDataService extends DataService {
     feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.id, { epics: project.epics });
+    return projects.update(project.key, { epics: project.epics });
   }
 
   getTaskFromBackend(key: string): Observable<Task | null> {
@@ -133,7 +133,7 @@ export class FirebaseDataService extends DataService {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return Observable.fromPromise(this.db.list(Task.COLLECTION_NAME).push(task).then(addedTask => {
       task.key = addedTask.key;
-      projects.update(project.id, { epics: project.epics });
+      projects.update(project.key, { epics: project.epics });
     }));
   }
 
@@ -160,6 +160,6 @@ export class FirebaseDataService extends DataService {
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return Observable.fromPromise(tasks.update(task.key, { ...task }))
-        .merge(projects.update(project.id, { epics: project.epics }));
+        .merge(projects.update(project.key, { epics: project.epics }));
   }
 }
