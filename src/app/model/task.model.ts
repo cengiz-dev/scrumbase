@@ -30,4 +30,22 @@ export class Task extends TaskSummary {
     constructor(title: string) {
         super(title);
     }
+
+    // rest operator is not properly supported by typescript
+    // public toTaskSummary(): TaskSummary {
+    //     let {description, points, priority, status, ...result} = this;
+    //     return result;
+    // }
+}
+
+export function task2TaskSummary(task: Task): TaskSummary {
+    let result: TaskSummary = new TaskSummary(task.title);
+    if (task.key) result.key = task.key;
+    if (task.identifier) result.identifier = task.identifier;
+    if (task.type) result.type = task.type;
+    if (task.createdOn) result.createdOn = task.createdOn;
+    if (task.createdBy) result.createdBy = task.createdBy;
+    if (task.lastUpdatedOn) result.lastUpdatedOn = task.lastUpdatedOn;
+    if (task.lastUpdatedBy) result.lastUpdatedBy = task.lastUpdatedBy;
+    return result;
 }

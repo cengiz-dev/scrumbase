@@ -52,8 +52,7 @@ export class FeatureDetailsComponent implements OnInit {
   }
 
   onAddTask(form: NgForm, project: ProjectRef, epicIndex: number, featureIndex: number) {
-    this.store.dispatch(new ProjectsActions.AddTask(
-      { project: project, epicIndex: epicIndex, featureIndex: featureIndex, task: { ...this.addedTask }}));
+    this.store.dispatch(new ProjectsActions.AddTask({ project, epicIndex, featureIndex, task: { ...this.addedTask } }));
     form.resetForm();
     this.addedTask = new Task('');
     this.addTaskPanelOpenState = false;
