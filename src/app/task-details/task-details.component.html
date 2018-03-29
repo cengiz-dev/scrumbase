@@ -9,6 +9,30 @@
             <input matInput required name="title" placeholder="title" [ngModel]="currentTask?.title">
           </mat-form-field>
           <mat-form-field>
+            <mat-select [ngModel]="currentTask?.type" name="taskType">
+              <mat-option *ngFor="let key of taskTypeKeys" value="{{taskTypeValues[key]}}">{{taskTypeValues[key]}}</mat-option>
+            </mat-select>
+            <mat-hint align="end">Select task type</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select [ngModel]="currentTask?.status" name="taskStatus">
+              <mat-option *ngFor="let key of taskStatusKeys" value="{{taskStatusValues[key]}}">{{taskStatusValues[key]}}</mat-option>
+            </mat-select>
+            <mat-hint align="end">Select task status</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select [ngModel]="currentTask?.points" name="taskPoints">
+              <mat-option *ngFor="let key of taskPointsKeys" value="{{taskPointsValues[key]}}">{{taskPointsValues[key]}}</mat-option>
+            </mat-select>
+            <mat-hint align="end">Select task points</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select [ngModel]="currentTask?.priority" name="taskPriority">
+              <mat-option *ngFor="let key of taskPriorityKeys" value="{{taskPriorityValues[key]}}">{{taskPriorityValues[key]}}</mat-option>
+            </mat-select>
+            <mat-hint align="end">Select task priority</mat-hint>
+          </mat-form-field>
+          <mat-form-field>
             <mat-label>description</mat-label>
             <textarea matInput required name="description" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="description"
               [ngModel]="currentTask?.description"></textarea>
@@ -25,9 +49,41 @@
             <span class="data data-value">{{ currentTask?.title }}</span>
           </div>
           <div class="data-line">
+            <span class="data data-label">type:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.type }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">status:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.status }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">points:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.points }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">priority:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentTask?.priority }}</span>
+          </div>
+          <div class="data-line">
             <span class="data data-label">description:</span>
             &nbsp;
             <span class="data data-value">{{ currentTask?.description }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">created on:</span>
+            <span class="data data-value">{{ currentTask?.createdOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentTask?.createdBy.displayName }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">last updated on:</span>
+            <span class="data data-value">{{ currentTask?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentTask?.lastUpdatedBy.displayName }}</span>
           </div>
           <button mat-raised-button color="primary" (click)="onEditTask(currentTask)">Edit</button>
         </ng-template>

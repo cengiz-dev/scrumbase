@@ -17,10 +17,11 @@ export class TaskSummary {
 
 export class Task extends TaskSummary {
     public static COLLECTION_NAME = 'tasks';
-    public description: string;
+    
+    public status: TaskStatus;
     public points: number;
     public priority: TaskPriority;
-    public status: TaskStatus;
+    public description: string;
 
     // TODO:
     // assignedTo

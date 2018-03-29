@@ -13,6 +13,11 @@ import { ProjectRef } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
 import { Task, TaskSummary } from '../model/task.model';
+import { TaskType } from '../model/task-type.model';
+import { TaskStatus } from '../model/task-status.model';
+import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
+import { TaskPriorityMoscow, TaskPrioritySeverity, TaskPriorityLevel } from '../model/task-priority.model';
+import { TaskPointsFibonacci, TaskPointsPowersOf2, TaskPointsLinear } from '../model/task-points.model';
 
 @Component({
   selector: 'app-task-details',
@@ -24,11 +29,50 @@ export class TaskDetailsComponent implements OnInit {
   routeParams$: Observable<Params>;
   currentProject$: Observable<ProjectRef>;
   currentTask$: Observable<Task>;
+  taskTypeKeys = Object.keys(TaskType);
+  taskTypeValues = TaskType;
+  taskStatusKeys = Object.keys(TaskStatus);
+  taskStatusValues = TaskStatus;
+  taskPriorityKeys;
+  taskPriorityValues;
+  taskPointsKeys;
+  taskPointsValues;
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.viewState$ = this.store.select(getProjectsState);
     this.routeParams$ = this.store.select(getRouteParams);
-    this.currentProject$ = this.store.select(getSelectedProject);
+    this.currentProject$ = this.store.select(getSelectedProject).do(currentProject => {
+      if (currentProject && currentProject.settings) {
+        switch (currentProject.settings.priorityScheme) {
+          case TaskPriorityScheme.MOSCOW:
+            this.taskPriorityKeys = Object.keys(TaskPriorityMoscow);
+            this.taskPriorityValues = TaskPriorityMoscow;
+            break;
+          case TaskPriorityScheme.SEVERITY:
+            this.taskPriorityKeys = Object.keys(TaskPrioritySeverity);
+            this.taskPriorityValues = TaskPrioritySeverity;
+            break;
+          case TaskPriorityScheme.LEVEL:
+            this.taskPriorityKeys = Object.keys(TaskPriorityLevel);
+            this.taskPriorityValues = TaskPriorityLevel;
+            break;
+        }
+        switch (currentProject.settings.pointScheme) {
+          case TaskPointScheme.FIBONACCI:
+            this.taskPointsKeys = Object.keys(TaskPointsFibonacci);
+            this.taskPointsValues = TaskPointsFibonacci;
+            break;
+          case TaskPointScheme.POWERS_OF_2:
+            this.taskPointsKeys = Object.keys(TaskPointsPowersOf2);
+            this.taskPointsValues = TaskPointsPowersOf2;
+            break;
+          case TaskPointScheme.LINEAR:
+            this.taskPointsKeys = Object.keys(TaskPointsLinear);
+            this.taskPointsValues = TaskPointsLinear;
+            break;
+        }
+      }
+    });
     this.currentTask$ = this.store.select(getSelectedTaskSummary).pipe(
       mergeMap(taskSummary => {
         if (taskSummary) {
@@ -50,6 +94,10 @@ export class TaskDetailsComponent implements OnInit {
     const value = form.value;
     let updatedTask = { ...task };
     updatedTask.title = value.title;
+    updatedTask.type = value.taskType;
+    updatedTask.status = value.taskStatus;
+    updatedTask.points = value.taskPoints;
+    updatedTask.priority = value.taskPriority;
     updatedTask.description = value.description;
     this.store.dispatch(new ProjectsActions.UpdateTask({ project, updatedTask, epicIndex, featureIndex, taskIndex }));
   }

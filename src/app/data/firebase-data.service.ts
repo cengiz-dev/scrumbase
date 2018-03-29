@@ -139,7 +139,8 @@ export class FirebaseDataService extends DataService {
 
   updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
       taskIndex: number, user: User): Observable<any> {
-    let task: Task = { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, ...updatedTask };
+    updatedTask.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    updatedTask.lastUpdatedBy = user;
     if (!project.epics || epicIndex >= project.epics.length) {
       throw "Epic index out of bounds. Can't update task.";
     } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
@@ -151,7 +152,7 @@ export class FirebaseDataService extends DataService {
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return Observable.fromPromise(tasks.update(task.key, { ...task }))
+    return Observable.fromPromise(tasks.update(updatedTask.key, { ...updatedTask }))
         .merge(projects.update(project.key, { epics: project.epics }));
   }
 }
