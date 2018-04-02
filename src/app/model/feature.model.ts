@@ -3,6 +3,7 @@ import { User } from "./user.model";
 
 export class Feature {
     public description: string;
+    public taskPrefix: string;
     public tasks: TaskSummary[];
     public createdOn: any;
     public createdBy: User;
