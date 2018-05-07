@@ -49,7 +49,7 @@
 
             <form (ngSubmit)="onAddFeature(f, currentProject, routeParams.epicIndex)" #f="ngForm">
               <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
-                <input matInput required [(ngModel)]="addedFeature.title" name="title">
+                <input matInput required [(ngModel)]="addedFeature.title" name="title" />
                 <mat-placeholder>
                   <mat-icon>edit</mat-icon>
                   <b>Feature Title</b>
@@ -62,6 +62,14 @@
                 <mat-placeholder>
                   <mat-icon>edit</mat-icon>
                   <b>Feature Description</b>
+                </mat-placeholder>
+              </mat-form-field>
+
+              <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+                <input matInput required [(ngModel)]="addedFeature.taskPrefix" name="taskPrefix" />
+                <mat-placeholder>
+                  <mat-icon>edit</mat-icon>
+                  <b>Task Prefix</b><i *ngIf="addedFeature.title"> - ie. {{ addedFeature.title | removeSpaces | slice:0:3 | uppercase }}</i>
                 </mat-placeholder>
               </mat-form-field>
 

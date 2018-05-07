@@ -36,6 +36,7 @@ import { EpicDetailsComponent } from './epic-details/epic-details.component';
 import { ProjectComponent } from './project/project.component';
 import { FeatureDetailsComponent } from './feature-details/feature-details.component';
 import { TaskDetailsComponent } from './task-details/task-details.component';
+import { RemoveSpacesPipe } from './shared/remove-spaces.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TaskDetailsComponent } from './task-details/task-details.component';
     ProjectComponent,
     FeatureDetailsComponent,
     TaskDetailsComponent,
+    RemoveSpacesPipe,
   ],
   imports: [
     BrowserModule,

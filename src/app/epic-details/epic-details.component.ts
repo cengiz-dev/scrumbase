@@ -14,7 +14,7 @@ import { Feature } from '../model/feature.model';
 @Component({
   selector: 'app-epic-details',
   templateUrl: './epic-details.component.html',
-  styleUrls: ['./epic-details.component.css']
+  styleUrls: ['./epic-details.component.css'],
 })
 export class EpicDetailsComponent implements OnInit {
   viewState$: Observable<ProjectsState>;

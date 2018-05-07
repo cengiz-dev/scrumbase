@@ -69,7 +69,7 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.key, { epics: project.epics });
   }
 
-  addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Promise<void> {
+  addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Observable<any> {
     let epic: Epic;
     if (project.epics && epicIndex < project.epics.length) {
       epic = project.epics[epicIndex];
@@ -82,8 +82,15 @@ export class FirebaseDataService extends DataService {
     feature.createdOn = feature.lastUpdatedOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.createdBy = feature.lastUpdatedBy = epic.lastUpdatedBy = user;
     epic.features.push(feature);
-    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.key, { epics: project.epics });
+
+    return this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}`).snapshotChanges().take(1).map(a => {
+      const data = a.payload.val();
+      if (data.prefixes && data.prefixes[feature.taskPrefix]) {
+        throw `Prefix ${feature.taskPrefix} already exists for project ${project.title}`;
+      }
+      this.db.list(`${ProjectRef.COLLECTION_NAME}/${project.key}/prefixes`).set(feature.taskPrefix, feature.taskPrefix)
+        .then(val => this.db.list(ProjectRef.COLLECTION_NAME).update(project.key, { epics: project.epics }));
+    });
   }
 
   updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void> {
@@ -112,7 +119,7 @@ export class FirebaseDataService extends DataService {
           return data;
         });
       })
-      .map(v => v && v.length > 0? v[0] : null);
+      .map(v => v && v.length > 0 ? v[0] : null);
   }
 
   addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
@@ -138,7 +145,7 @@ export class FirebaseDataService extends DataService {
   }
 
   updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
-      taskIndex: number, user: User): Observable<any> {
+    taskIndex: number, user: User): Observable<any> {
     updatedTask.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     updatedTask.lastUpdatedBy = user;
     if (!project.epics || epicIndex >= project.epics.length) {
@@ -153,6 +160,6 @@ export class FirebaseDataService extends DataService {
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return Observable.fromPromise(tasks.update(updatedTask.key, { ...updatedTask }))
-        .merge(projects.update(project.key, { epics: project.epics }));
+      .merge(projects.update(project.key, { epics: project.epics }));
   }
 }
