@@ -50,9 +50,9 @@ export class FirebaseDataService extends DataService {
     }
     epic.createdOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     epic.createdBy = epic.lastUpdatedBy = user;
-    project.epics.push(epic);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: project.epics });
+    let epics = project.epics ? [...project.epics, epic] : [epic];
+    return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: epics });
   }
 
   updateEpicInBackend(project: ProjectRef, updatedEpic: Epic, epicIndex: number, user: User): Promise<void> {
@@ -77,21 +77,17 @@ export class FirebaseDataService extends DataService {
     } else {
       throw { message: "Epic index out of bounds. Can't add feature." };
     }
-    if (!epic.features) {
-      epic.features = new Array<Feature>();
-    }
     feature.createdOn = feature.lastUpdatedOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.createdBy = feature.lastUpdatedBy = epic.lastUpdatedBy = user;
-    epic.features.push(feature);
 
     return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}`).snapshotChanges().take(1).map(a => {
       const data = a.payload.val();
       if (data && data[feature.taskPrefix]) {
         throw { message: `Prefix ${feature.taskPrefix} already exists for project ${project.title}` };
       }
-      this.db.list(`${ProjectRef.COLLECTION_NAME}/${project.key}`).set(feature.taskPrefix, feature.taskPrefix)
-        .then(val => this.db.list(ProjectRef.COLLECTION_NAME).update(project.key, { epics: project.epics }));
-      this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}`).update({ count: 0 });
+      let features = epic.features ? [...epic.features, feature] : [feature];
+      this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}`).update({ count: 0 })
+        .then(() => this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}`).update({ features: features }));
     });
   }
 
@@ -133,22 +129,23 @@ export class FirebaseDataService extends DataService {
     } else {
       feature = project.epics[epicIndex].features[featureIndex];
     }
-    if (!feature.tasks) {
-      feature.tasks = new Array<Task>();
-    }
     task.createdOn = task.lastUpdatedOn = feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     task.createdBy = task.lastUpdatedBy = feature.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     let countRef = this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}/count`).query.ref;
     return Observable.fromPromise(
       countRef.transaction(count => count ? ++count : 1)
-        .then((result: TransactionResult) => {
-          task.identifier = `${feature.taskPrefix}-${result.snapshot.val()}`;
-          return this.db.list(Task.COLLECTION_NAME).push(task).then(addedTaskRef => {
-            task.key = addedTaskRef.key;
-            feature.tasks.push(task2TaskSummary(task));
-            projects.update(project.key, { epics: project.epics });
-          });
+        .then((result: TransactionResult) => result.snapshot.val())
+        .then(val => {
+          task.identifier = `${feature.taskPrefix}-${val}`;
+          return task;
+        })
+        .then(taskToAdd => this.db.list(Task.COLLECTION_NAME).push(taskToAdd))
+        .then(addedTaskRef => {
+          task.key = addedTaskRef.key;
+          let tasks: Array<TaskSummary> = feature.tasks ? [...feature.tasks, task2TaskSummary(task)] : [task2TaskSummary(task)];
+          this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}`)
+            .update({ tasks: tasks });
         })
     );
   }
