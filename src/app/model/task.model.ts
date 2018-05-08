@@ -17,6 +17,7 @@ export class TaskSummary {
 
 export class Task extends TaskSummary {
     public static COLLECTION_NAME = 'tasks';
+    public static SEQUENCE_COLLECTION_NAME = Task.COLLECTION_NAME + '/seq';
     
     public status: TaskStatus;
     public points: number;

@@ -44,6 +44,9 @@
         </form>
         <ng-template #viewMode>
           <div class="data-line">
+            <span class="data data-label">{{ currentTask?.identifier }}</span>
+          </div>
+          <div class="data-line">
             <span class="data data-label">title:</span>
             &nbsp;
             <span class="data data-value">{{ currentTask?.title }}</span>
