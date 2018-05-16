@@ -1,8 +1,10 @@
+import { from as observableFrom,  Observable } from 'rxjs';
+
+import {take} from 'rxjs/operators';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/take';
+
+
 
 import { Project, ProjectRef } from '../model/project.model';
 import { config } from './data.config';
@@ -36,7 +38,7 @@ export abstract class DataService {
             if (projectsString) {
                 let localData = LocalData.fromString(projectsString);
                 if (!localData.isStale()) {
-                    projects$ = Observable.from([localData.data]);
+                    projects$ = observableFrom([localData.data]);
                 }
             }
         }
@@ -44,7 +46,7 @@ export abstract class DataService {
         if (!projects$) {
             projects$ = this.getProjectsFromBackend();
             if (isPlatformBrowser(this.platformId)) {
-                projects$.take(1).subscribe((backendData: ProjectRef[]) => {
+                projects$.pipe(take(1)).subscribe((backendData: ProjectRef[]) => {
                     let localData = new LocalData<ProjectRef[]>(new Date().getTime(), backendData);
                     localStorage.setItem(ProjectRef.COLLECTION_NAME, JSON.stringify(localData));
                 });

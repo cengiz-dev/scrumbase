@@ -1,7 +1,8 @@
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import * as firebase from 'firebase';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { Project, ProjectRef } from '../model/project.model';
 import { AuthService } from './auth.service';
@@ -23,6 +24,6 @@ export class FirebaseAuthService extends AuthService {
     }
 
     getUser(): Observable<User | null> {
-        return this.firebaseAuth.authState.map(user => user ? new User(user.uid, user.providerId, user.displayName) : null);
+        return this.firebaseAuth.authState.pipe(map(user => user ? new User(user.uid, user.providerId, user.displayName) : null));
     }
 }

@@ -1,10 +1,10 @@
+import {tap,  mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { mergeMap } from 'rxjs/operators';
-import 'rxjs/add/operator/do';
+import { Observable } from 'rxjs';
+
 
 import { AppState, ProjectsState } from '../store/app.state';
 import { getProjectsState, getRouteParams, getSelectedProject, getSelectedTaskSummary, getCurrentTask } from '../store/app.selectors';
@@ -41,7 +41,7 @@ export class TaskDetailsComponent implements OnInit {
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.viewState$ = this.store.select(getProjectsState);
     this.routeParams$ = this.store.select(getRouteParams);
-    this.currentProject$ = this.store.select(getSelectedProject).do(currentProject => {
+    this.currentProject$ = this.store.select(getSelectedProject).pipe(tap(currentProject => {
       if (currentProject && currentProject.settings) {
         switch (currentProject.settings.priorityScheme) {
           case TaskPriorityScheme.MOSCOW:
@@ -72,7 +72,7 @@ export class TaskDetailsComponent implements OnInit {
             break;
         }
       }
-    });
+    }));
     this.currentTask$ = this.store.select(getSelectedTaskSummary).pipe(
       mergeMap(taskSummary => {
         if (taskSummary) {

@@ -1,16 +1,17 @@
+import { from as observableFrom,  Observable } from 'rxjs';
+
+import { take, map, merge} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { database } from 'firebase';
-import { Observable } from 'rxjs/Observable';
 
 import { DataService } from './data.service';
-import './observable.from-thenable';
 import { User } from '../model/user.model';
 import { Project, ProjectRef } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
 import { Task, TaskSummary, task2TaskSummary } from '../model/task.model';
-import { TransactionResult } from '@firebase/database/dist/esm/src/api/TransactionResult';
+import { TransactionResult } from '@firebase/database/dist/src/api/TransactionResult';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -19,14 +20,14 @@ export class FirebaseDataService extends DataService {
   }
 
   getProjectsFromBackend(): Observable<ProjectRef[]> {
-    return this.db.list(ProjectRef.COLLECTION_NAME).snapshotChanges()
-      .map(actions => {
+    return this.db.list(ProjectRef.COLLECTION_NAME).snapshotChanges().pipe(
+      map(actions => {
         return actions.map(a => {
           const data = a.payload.val() as ProjectRef;
           data.key = a.payload.key;
           return data;
         });
-      });
+      }));
   }
 
   addProjectToBackend(project: Project, user: User): Observable<any> {
@@ -34,7 +35,7 @@ export class FirebaseDataService extends DataService {
     project.createdBy = user;
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     project.lastUpdatedBy = user;
-    return Observable.fromThenable(this.db.list(ProjectRef.COLLECTION_NAME).push(project));
+    return observableFrom(this.db.list(ProjectRef.COLLECTION_NAME).push(project));
   }
 
   updateProjectInBackend(project: ProjectRef, user: User): Promise<void> {
@@ -80,7 +81,7 @@ export class FirebaseDataService extends DataService {
     feature.createdOn = feature.lastUpdatedOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.createdBy = feature.lastUpdatedBy = epic.lastUpdatedBy = user;
 
-    return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}`).snapshotChanges().take(1).map(a => {
+    return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}`).snapshotChanges().pipe(take(1),map(a => {
       const data = a.payload.val();
       if (data && data[feature.taskPrefix]) {
         throw { message: `Prefix ${feature.taskPrefix} already exists for project ${project.title}` };
@@ -88,7 +89,7 @@ export class FirebaseDataService extends DataService {
       let features = epic.features ? [...epic.features, feature] : [feature];
       this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}`).update({ count: 0 })
         .then(() => this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}`).update({ features: features }));
-    });
+    }),);
   }
 
   updateFeatureInBackend(project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number, user: User): Promise<void> {
@@ -109,15 +110,15 @@ export class FirebaseDataService extends DataService {
   }
 
   getTaskFromBackend(key: string): Observable<Task | null> {
-    return this.db.list(Task.COLLECTION_NAME, ref => ref.equalTo(null, key)).snapshotChanges()
-      .map(actions => {
+    return this.db.list(Task.COLLECTION_NAME, ref => ref.equalTo(null, key)).snapshotChanges().pipe(
+      map(actions => {
         return actions.map(a => {
           const data = a.payload.val() as Task;
           data.key = a.payload.key;
           return data;
         });
-      })
-      .map(v => v && v.length > 0 ? v[0] : null);
+      }),
+      map(v => v && v.length > 0 ? v[0] : null),);
   }
 
   addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
@@ -133,7 +134,7 @@ export class FirebaseDataService extends DataService {
     task.createdBy = task.lastUpdatedBy = feature.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     let countRef = this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}/count`).query.ref;
-    return Observable.fromPromise(
+    return observableFrom(
       countRef.transaction(count => count ? ++count : 1)
         .then((result: TransactionResult) => result.snapshot.val())
         .then(val => {
@@ -165,7 +166,7 @@ export class FirebaseDataService extends DataService {
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return Observable.fromPromise(tasks.update(updatedTask.key, { ...updatedTask }))
-      .merge(projects.update(project.key, { epics: project.epics }));
+    return observableFrom(tasks.update(updatedTask.key, { ...updatedTask })).pipe(
+      merge(projects.update(project.key, { epics: project.epics })));
   }
 }

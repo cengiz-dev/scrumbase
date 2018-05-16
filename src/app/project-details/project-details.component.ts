@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AppState, ProjectsState } from '../store/app.state';
 import { getProjectsState, getRouteParams, getSelectedProject } from '../store/app.selectors';
