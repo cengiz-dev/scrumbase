@@ -28,6 +28,7 @@
     "@ngrx/router-store": "^v6.0.0-beta.3",
     "@ngrx/store": "^v6.0.0-beta.3",
     "@ngrx/store-devtools": "^v6.0.0-beta.3",
+    "angular-linky": "^1.2.2",
     "angularfire2": "^5.0.0-rc.8",
     "core-js": "^2.4.1",
     "firebase": "^5.0.2",

@@ -74,7 +74,7 @@
           <div class="data-line">
             <span class="data data-label">description:</span>
             &nbsp;
-            <span class="data data-value">{{ currentTask?.description }}</span>
+            <span class="data data-value" [innerHTML]="currentTask?.description | linky"></span>
           </div>
           <div class="data-line">
             <span class="data data-label">created on:</span>

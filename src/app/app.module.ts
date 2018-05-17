@@ -6,6 +6,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
+import { LinkyModule } from 'angular-linky';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -59,6 +60,7 @@ import { AppMaterialModule } from './app-material.module';
     AppMaterialModule,
     DataModule,
     AuthModule,
+    LinkyModule,
   ],
   providers: [{ provide: RouterStateSerializer, useClass: CustomSerializer }],
   bootstrap: [AppComponent],
