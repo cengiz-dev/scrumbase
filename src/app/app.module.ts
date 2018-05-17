@@ -2,17 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatToolbarModule,
-  MatListModule,
-  MatIconModule,
-  MatButtonModule,
-  MatExpansionModule,
-  MatInputModule,
-  MatFormFieldModule,
-  MatSelectModule,
-  MatDialogModule,
-} from '@angular/material';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -37,6 +26,7 @@ import { ProjectComponent } from './project/project.component';
 import { FeatureDetailsComponent } from './feature-details/feature-details.component';
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { RemoveSpacesPipe } from './shared/remove-spaces.pipe';
+import { AppMaterialModule } from './app-material.module';
 
 @NgModule({
   declarations: [
@@ -66,15 +56,7 @@ import { RemoveSpacesPipe } from './shared/remove-spaces.pipe';
     }),
     BrowserAnimationsModule,
     FormsModule,
-    MatIconModule,
-    MatListModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatExpansionModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatDialogModule,
+    AppMaterialModule,
     DataModule,
     AuthModule,
   ],

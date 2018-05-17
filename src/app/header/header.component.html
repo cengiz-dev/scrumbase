@@ -6,10 +6,19 @@
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
-  <span>
+  <span fxLayout="row" fxHide fxShow.gt-xs>
     <a mat-button *ngIf="!(user$ | async)" (click)="onLogin()">login</a>
     <span *ngIf="(user$ | async) as user">{{user.displayName}} |
       <a mat-button (click)="onLogout()">logout</a>
     </span>
   </span>
+
+  <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-xs>
+    <mat-icon>person</mat-icon>
+  </button>
 </mat-toolbar>
+<mat-menu x-position="before" #menu>
+  <a mat-menu-item *ngIf="!(user$ | async)" (click)="onLogin()">login</a>
+  <span mat-menu-item disabled *ngIf="(user$ | async) as user">{{user.displayName}}</span>
+  <a mat-menu-item *ngIf="user$ | async" (click)="onLogout()">logout</a>
+</mat-menu>

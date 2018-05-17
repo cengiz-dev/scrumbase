@@ -4,17 +4,28 @@
       <h2 class="project-title">{{selectedProject.title}} </h2>
     </a>
   </ng-container>
-  <a mat-button routerLink="/">sprints</a>
-  <a mat-button routerLink="/">backlog</a>
-  <a mat-button routerLink="/">collaborators</a>
+  <div fxLayout="row" fxHide fxShow.gt-xs>
+    <a mat-button routerLink="/">sprints</a>
+    <a mat-button routerLink="/">backlog</a>
+    <a mat-button routerLink="/">collaborators</a>
+  </div>
+
+  <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-xs>
+    <mat-icon>menu</mat-icon>
+  </button>
 
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
-  <span>
+  <span fxHide fxShow.gt-xs>
     <a mat-button routerLink="/projects" color="primary" class="bold-text">all projects</a>
   </span>
 </mat-toolbar>
+<mat-menu x-position="before" #menu>
+  <button mat-menu-item routerLink="/">sprints</button>
+  <button mat-menu-item routerLink="/">backlog</button>
+  <button mat-menu-item routerLink="/">collaborators</button>
+</mat-menu>
 <ng-container *ngIf="(routerState$ | async) as routerState">
   <div class="breadcrumb-container" *ngIf="(breadcrumbs$ | async) as breadcrumbs">
     <span class="breadcrumb" *ngFor="let breadcrumb of breadcrumbs; let i=index" (click)="onBreadcrumbClick(breadcrumbs, i)">{{ breadcrumb.name | titlecase }}</span>
