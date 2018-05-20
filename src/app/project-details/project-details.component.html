@@ -52,6 +52,18 @@
           &nbsp;
           <span class="data data-value">{{ currentProject?.settings?.pointScheme }}</span>
         </div>
+        <div class="data-line">
+          <span class="data data-label">created on:</span>
+          <span class="data data-value">{{ currentProject?.createdOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+          <span class="data data-label">by:</span>
+          <span class="data data-value">{{ currentProject?.createdBy.displayName }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data data-label">last updated on:</span>
+          <span class="data data-value">{{ currentProject?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+          <span class="data data-label">by:</span>
+          <span class="data data-value">{{ currentProject?.lastUpdatedBy.displayName }}</span>
+        </div>
         <button mat-raised-button color="primary" (click)="onEditProject(currentProject)">Edit</button>
       </ng-template>
 

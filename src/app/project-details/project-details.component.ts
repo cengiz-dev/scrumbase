@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { AppState, ProjectsState } from '../store/app.state';
 import { getProjectsState, getRouteParams, getSelectedProject } from '../store/app.selectors';
 import * as ProjectsActions from '../store/app.actions';
-import { ProjectRef } from '../model/project.model';
+import { ProjectRef, ProjectUpdate } from '../model/project.model';
 import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
 import { Epic } from '../model/epic.model';
 
@@ -43,12 +43,20 @@ export class ProjectDetailsComponent implements OnInit {
 
   onSaveProject(form: NgForm, project: ProjectRef) {
     const value = form.value;
-    let updatedProject = { ...project };
-    project.title = value.title;
-    updatedProject.description = value.description;
-    updatedProject.settings.priorityScheme = value.priorityScheme;
-    updatedProject.settings.pointScheme = value.pointScheme;
-    this.store.dispatch(new ProjectsActions.UpdateProject(updatedProject));
+    let updatedProject: ProjectUpdate = {};
+    if (project.title != value.title) {
+      updatedProject.title = value.title;
+    }
+    if (project.description != value.description) {
+      updatedProject.description = value.description;
+    }
+    if (project.settings.priorityScheme != value.priorityScheme) {
+      updatedProject.settings.priorityScheme = value.priorityScheme;
+    }
+    if (project.settings.pointScheme != value.pointScheme) {
+      updatedProject.settings.pointScheme = value.pointScheme;
+    }
+    this.store.dispatch(new ProjectsActions.UpdateProject({ key: project.key, projectUpdate: updatedProject }));
   }
 
   onCancelEditProject() {
@@ -56,7 +64,7 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onAddEpic(form: NgForm, project: ProjectRef) {
-    this.store.dispatch(new ProjectsActions.AddEpic({ project: project, epic: { ...this.addedEpic }}));
+    this.store.dispatch(new ProjectsActions.AddEpic({ project: project, epic: { ...this.addedEpic } }));
     form.resetForm();
     this.addedEpic = new Epic('');
     this.addEpicPanelOpenState = false;

@@ -7,10 +7,10 @@ import { database } from 'firebase';
 
 import { DataService } from './data.service';
 import { User } from '../model/user.model';
-import { Project, ProjectRef } from '../model/project.model';
+import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
-import { Task, TaskSummary, task2TaskSummary } from '../model/task.model';
+import { Task, TaskSummary, task2TaskSummary, TaskUpdate, taskSummaryUpdatesFromTaskUpdate } from '../model/task.model';
 import { TransactionResult } from '@firebase/database/dist/src/api/TransactionResult';
 
 @Injectable()
@@ -38,11 +38,16 @@ export class FirebaseDataService extends DataService {
     return observableFrom(this.db.list(ProjectRef.COLLECTION_NAME).push(project));
   }
 
-  updateProjectInBackend(project: ProjectRef, user: User): Promise<void> {
-    project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
-    project.lastUpdatedBy = user;
+  updateProjectInBackend(key: string, projectUpdate: ProjectUpdate, user: User): Promise<void> {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return projects.update(project.key, { ...project });
+    return projects.update(
+      key,
+      {
+        ...projectUpdate,
+        lastUpdatedOn: database.ServerValue.TIMESTAMP,
+        lastUpdatedBy: user,
+      }
+    );
   }
 
   addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void> {
@@ -151,22 +156,21 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
+  updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
     taskIndex: number, user: User): Observable<any> {
-    updatedTask.lastUpdatedOn = database.ServerValue.TIMESTAMP;
-    updatedTask.lastUpdatedBy = user;
     if (!project.epics || epicIndex >= project.epics.length) {
       throw { message: "Epic index out of bounds. Can't update task." };
     } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
       throw { message: "Feature index out of bounds. Can't update task." };
     } else if (!project.epics[epicIndex].features[featureIndex].tasks || taskIndex >= project.epics[epicIndex].features[featureIndex].tasks.length) {
       throw { message: "Task index out of bounds. Can't update task." };
-    } else {
-      project.epics[epicIndex].features[featureIndex].tasks[taskIndex] = task2TaskSummary(updatedTask);
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return observableFrom(tasks.update(updatedTask.key, { ...updatedTask })).pipe(
-      merge(projects.update(project.key, { epics: project.epics })));
+    console.log(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`, ...taskSummaryUpdatesFromTaskUpdate(updatedTask))
+    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+      merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`)
+        .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
+    );
   }
 }

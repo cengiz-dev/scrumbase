@@ -1,9 +1,9 @@
 import { Action } from '@ngrx/store';
 
-import { Project, ProjectRef } from '../model/project.model';
+import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
-import { Task } from '../model/task.model';
+import { Task, TaskUpdate } from '../model/task.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
@@ -46,7 +46,7 @@ export class CreateProject implements Action {
 export class UpdateProject implements Action {
   readonly type = ProjectsActionType.UPDATE_PROJECT;
 
-  constructor(public payload: ProjectRef) {}
+  constructor(public payload: { key: string, projectUpdate: ProjectUpdate }) {}
 }
 
 export class CancelEdit implements Action {
@@ -100,7 +100,7 @@ export class AddTask implements Action {
 export class UpdateTask implements Action {
   readonly type = ProjectsActionType.UPDATE_TASK;
 
-  constructor(public payload: { project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number, taskIndex: number }) {}
+  constructor(public payload: { project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number, taskIndex: number }) {}
 }
 
 export class SwitchEditMode implements Action {

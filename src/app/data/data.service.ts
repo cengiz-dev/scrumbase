@@ -6,12 +6,12 @@ import { isPlatformBrowser } from '@angular/common';
 
 
 
-import { Project, ProjectRef } from '../model/project.model';
+import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
 import { config } from './data.config';
 import { User } from '../model/user.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
-import { Task } from '../model/task.model';
+import { Task, TaskUpdate } from '../model/task.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -61,10 +61,10 @@ export abstract class DataService {
         return this.addProjectToBackend(project, user);
     }
 
-    public updateProject(project: ProjectRef, user: User): Promise<void> {
+    public updateProject(key: string, project: ProjectUpdate, user: User): Promise<void> {
         this.lastRefresh = 0;
 
-        return this.updateProjectInBackend(project, user);
+        return this.updateProjectInBackend(key, project, user);
     }
 
     public addEpic(project: ProjectRef, epic: Epic, user: User): Promise<void> {
@@ -103,10 +103,10 @@ export abstract class DataService {
         return this.addTaskInBackend(project, epicIndex, featureIndex, task, user);
     }
 
-    public updateTask(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number, taskIndex: number, user: User): Observable<any> {
+    public updateTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number, taskIndex: number, user: User): Observable<any> {
         this.lastRefresh = 0;
 
-        return this.updateTaskInBackend(project, updatedTask, epicIndex, featureIndex, taskIndex, user);
+        return this.updateTaskInBackend(project, taskKey, updatedTask, epicIndex, featureIndex, taskIndex, user);
     }
 
     private allowRefresh() {
@@ -122,7 +122,7 @@ export abstract class DataService {
 
     protected abstract addProjectToBackend(project: Project, user: User);
 
-    protected abstract updateProjectInBackend(project: ProjectRef, user: User): Promise<void>;
+    protected abstract updateProjectInBackend(key: string, project: ProjectUpdate, user: User): Promise<void>;
 
     protected abstract addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void>;
 
@@ -136,6 +136,6 @@ export abstract class DataService {
 
     protected abstract addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any>;
 
-    protected abstract updateTaskInBackend(project: ProjectRef, updatedTask: Task, epicIndex: number, featureIndex: number,
+    protected abstract updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
         taskIndex: number, user: User): Observable<any>;
 }

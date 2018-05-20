@@ -12,7 +12,7 @@ import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
 import { Epic } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
-import { Task, TaskSummary } from '../model/task.model';
+import { Task, TaskSummary, TaskUpdate } from '../model/task.model';
 import { TaskType } from '../model/task-type.model';
 import { TaskStatus } from '../model/task-status.model';
 import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
@@ -92,14 +92,26 @@ export class TaskDetailsComponent implements OnInit {
 
   onSaveTask(form: NgForm, task: Task, project: ProjectRef, epicIndex: number, featureIndex: number, taskIndex: number) {
     const value = form.value;
-    let updatedTask = { ...task };
-    updatedTask.title = value.title;
-    updatedTask.type = value.taskType;
-    updatedTask.status = value.taskStatus;
-    updatedTask.points = value.taskPoints;
-    updatedTask.priority = value.taskPriority;
-    updatedTask.description = value.description;
-    this.store.dispatch(new ProjectsActions.UpdateTask({ project, updatedTask, epicIndex, featureIndex, taskIndex }));
+    let updatedTask: TaskUpdate = { };
+    if (task.title != value.title) {
+      updatedTask.title = value.title;
+    }
+    if (task.type != value.taskType) {
+      updatedTask.type = value.taskType;
+    }
+    if (task.status != value.taskStatus) {
+      updatedTask.status = value.taskStatus;
+    }
+    if (task.points != value.taskPoints) {
+      updatedTask.points = value.taskPoints;
+    }
+    if (task.priority != value.taskPriority) {
+      updatedTask.priority = value.taskPriority;
+    }
+    if (task.description != value.description) {
+      updatedTask.description = value.description;
+    }
+    this.store.dispatch(new ProjectsActions.UpdateTask({ project, taskKey: task.key, updatedTask, epicIndex, featureIndex, taskIndex }));
   }
 
   onCancelEditTask() {

@@ -22,6 +22,12 @@ export class Project {
     }
 }
 
+export interface ProjectUpdate {
+    title?: string;
+    description?: string;
+    settings?: ProjectSettings;
+}
+
 export class ProjectRef extends Project {
     public static COLLECTION_NAME = 'projects';
     constructor(public key: string, public title: string) {

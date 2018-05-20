@@ -40,6 +40,15 @@ export class Task extends TaskSummary {
     // }
 }
 
+export interface TaskUpdate {
+    type?: TaskType;
+    title?: string;
+    status?: TaskStatus;
+    points?: number;
+    priority?: TaskPriority;
+    description?: string;
+}
+
 export function task2TaskSummary(task: Task): TaskSummary {
     let result: TaskSummary = new TaskSummary(task.title);
     if (task.key) result.key = task.key;
@@ -49,5 +58,12 @@ export function task2TaskSummary(task: Task): TaskSummary {
     if (task.createdBy) result.createdBy = task.createdBy;
     if (task.lastUpdatedOn) result.lastUpdatedOn = task.lastUpdatedOn;
     if (task.lastUpdatedBy) result.lastUpdatedBy = task.lastUpdatedBy;
+    return result;
+}
+
+export function taskSummaryUpdatesFromTaskUpdate(taskUpdate: TaskUpdate): any {
+    let result: any = { };
+    if (taskUpdate.title) result.title = taskUpdate.title;
+    if (taskUpdate.type) result.type = taskUpdate.type;
     return result;
 }

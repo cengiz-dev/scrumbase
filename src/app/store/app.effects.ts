@@ -55,7 +55,7 @@ export class ProjectsEffects {
     mergeMap((action: UpdateProject) => {
       const user$ = this.authService.getUser();
       const dataUpdate$ = user$.pipe(
-        mergeMap(user => this.dataService.updateProject(action.payload, user))
+        mergeMap(user => this.dataService.updateProject(action.payload.key, action.payload.projectUpdate, user))
       );
       return dataUpdate$.pipe(
         map(() => new GetProjects()),
@@ -150,7 +150,7 @@ export class ProjectsEffects {
     mergeMap((action: UpdateTask) => {
       const user$ = this.authService.getUser();
       const dataUpdate$ = user$.pipe(
-        mergeMap(user => this.dataService.updateTask(action.payload.project, action.payload.updatedTask, action.payload.epicIndex,
+        mergeMap(user => this.dataService.updateTask(action.payload.project, action.payload.taskKey, action.payload.updatedTask, action.payload.epicIndex,
           action.payload.featureIndex, action.payload.taskIndex, user))
       );
       return dataUpdate$.pipe(
