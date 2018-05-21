@@ -13,3 +13,8 @@ export class Epic {
 
     constructor(public title: string) { }
 }
+
+export interface EpicUpdate {
+    title?: string;
+    description?: string;
+}

@@ -28,6 +28,12 @@
             &nbsp;
             <span class="data data-value">{{ currentEpic?.description }}</span>
           </div>
+          <div class="data-line">
+            <span class="data data-label">last updated on:</span>
+            <span class="data data-value">{{ currentEpic?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentEpic?.lastUpdatedBy.displayName }}</span>
+          </div>
           <button mat-raised-button color="primary" (click)="onEditEpic(currentEpic)">Edit</button>
         </ng-template>
 

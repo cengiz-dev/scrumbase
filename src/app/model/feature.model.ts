@@ -12,3 +12,8 @@ export class Feature {
 
     constructor(public title: string) { }
 }
+
+export interface FeatureUpdate {
+    title?: string;
+    description?: string;
+}

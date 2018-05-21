@@ -1,8 +1,8 @@
 import { Action } from '@ngrx/store';
 
 import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
-import { Epic } from '../model/epic.model';
-import { Feature } from '../model/feature.model';
+import { Epic, EpicUpdate } from '../model/epic.model';
+import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskUpdate } from '../model/task.model';
 
 export enum ProjectsActionType {
@@ -64,7 +64,7 @@ export class AddEpic implements Action {
 export class UpdateEpic implements Action {
   readonly type = ProjectsActionType.UPDATE_EPIC;
 
-  constructor(public payload: { project: ProjectRef, updatedEpic: Epic, epicIndex: number }) {}
+  constructor(public payload: { project: ProjectRef, updatedEpic: EpicUpdate, epicIndex: number }) {}
 }
 
 export class AddFeature implements Action {
@@ -76,7 +76,7 @@ export class AddFeature implements Action {
 export class UpdateFeature implements Action {
   readonly type = ProjectsActionType.UPDATE_FEATURE;
 
-  constructor(public payload: { project: ProjectRef, updatedFeature: Feature, epicIndex: number, featureIndex: number }) {}
+  constructor(public payload: { project: ProjectRef, updatedFeature: FeatureUpdate, epicIndex: number, featureIndex: number }) {}
 }
 
 export class SetTask implements Action {

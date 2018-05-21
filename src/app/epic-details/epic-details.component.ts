@@ -8,7 +8,7 @@ import { AppState, ProjectsState } from '../store/app.state';
 import { getProjectsState, getRouteParams, getSelectedProject, getSelectedEpic } from '../store/app.selectors';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
-import { Epic } from '../model/epic.model';
+import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
 
 @Component({
@@ -41,9 +41,14 @@ export class EpicDetailsComponent implements OnInit {
 
   onSaveEpic(form: NgForm, projectRef: ProjectRef, epicIndex: number) {
     const value = form.value;
-    let updatedEpic = { ...projectRef.epics[epicIndex] };
-    updatedEpic.title = value.title;
-    updatedEpic.description = value.description;
+    let epic = projectRef.epics[epicIndex];
+    let updatedEpic: EpicUpdate = {};
+    if (epic.title != value.title) {
+      updatedEpic.title = value.title;
+    }
+    if (epic.description != value.description) {
+      updatedEpic.description = value.description;
+    }
     this.store.dispatch(new ProjectsActions.UpdateEpic({
       project: projectRef,
       updatedEpic: updatedEpic,

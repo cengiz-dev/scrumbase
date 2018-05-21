@@ -28,6 +28,12 @@
             &nbsp;
             <span class="data data-value">{{ currentFeature?.description }}</span>
           </div>
+          <div class="data-line">
+            <span class="data data-label">last updated on:</span>
+            <span class="data data-value">{{ currentFeature?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentFeature?.lastUpdatedBy.displayName }}</span>
+          </div>
           <button mat-raised-button color="primary" (click)="onEditFeature(currentFeature)">Edit</button>
         </ng-template>
 

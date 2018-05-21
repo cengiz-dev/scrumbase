@@ -8,7 +8,7 @@ import { AppState, ProjectsState } from '../store/app.state';
 import { getProjectsState, getRouteParams, getSelectedProject, getSelectedFeature } from '../store/app.selectors';
 import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
-import { Feature } from '../model/feature.model';
+import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task } from '../model/task.model';
 
 @Component({
@@ -39,12 +39,17 @@ export class FeatureDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.SwitchEditMode(true));
   }
 
-  onSaveFeature(form: NgForm, project: ProjectRef, epicIndex: number, featureIndex: number) {
+  onSaveFeature(form: NgForm, projectRef: ProjectRef, epicIndex: number, featureIndex: number) {
     const value = form.value;
-    let updatedFeature = { ...project.epics[epicIndex].features[featureIndex] };
-    updatedFeature.title = value.title;
-    updatedFeature.description = value.description;
-    this.store.dispatch(new ProjectsActions.UpdateFeature({ project, updatedFeature, epicIndex, featureIndex }));
+    let feature = projectRef.epics[epicIndex].features[featureIndex];
+    let updatedFeature: FeatureUpdate = {};
+    if (feature.title != value.title) {
+      updatedFeature.title = value.title;
+    }
+    if (feature.description != value.description) {
+      updatedFeature.description = value.description;
+    }
+    this.store.dispatch(new ProjectsActions.UpdateFeature({ project: projectRef, updatedFeature, epicIndex, featureIndex }));
   }
 
   onCancelEditFeature() {
