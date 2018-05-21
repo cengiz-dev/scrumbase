@@ -18,3 +18,8 @@ form > mat-form-field {
 .data-line {
     margin: 30px 0 30px 0;
 }
+
+.action-line {
+    display: flex;
+    margin: 10px;
+}

@@ -117,4 +117,8 @@ export class TaskDetailsComponent implements OnInit {
   onCancelEditTask() {
     this.store.dispatch(new ProjectsActions.CancelEdit());
   }
+
+  onTaskDeleted(event: any, project: ProjectRef, taskKey: string) {
+    this.store.dispatch(new ProjectsActions.DeleteTask({ project, taskKey }));
+  }
 }

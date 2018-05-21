@@ -66,4 +66,9 @@ export class FeatureDetailsComponent implements OnInit {
   onTaskSelected(projectIndex: number, epicIndex: number, featureIndex: number, taskIndex: number) {
     this.router.navigate(['project', projectIndex, 'epic', epicIndex, 'feature', featureIndex, 'task', taskIndex]);
   }
+
+  onTaskDeleted(event: any, project: ProjectRef, taskKey: string) {
+    event.stopPropagation();
+    this.store.dispatch(new ProjectsActions.DeleteTask({ project, taskKey }));
+  }
 }

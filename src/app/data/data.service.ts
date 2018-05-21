@@ -1,6 +1,6 @@
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { from as observableFrom,  Observable } from 'rxjs';
+import { from as observableFrom, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
@@ -106,6 +106,12 @@ export abstract class DataService {
         return this.updateTaskInBackend(project, taskKey, updatedTask, epicIndex, featureIndex, taskIndex, user);
     }
 
+    public deleteTask(project: ProjectRef, taskKey: string, user: User): Observable<any> {
+        this.lastRefresh = 0;
+
+        return this.deleteTaskInBackend(project, taskKey, user);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -135,4 +141,6 @@ export abstract class DataService {
 
     protected abstract updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
         taskIndex: number, user: User): Observable<any>;
+
+    protected abstract deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any>;
 }

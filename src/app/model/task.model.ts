@@ -7,6 +7,7 @@ export class TaskSummary {
     public key: string;
     public identifier: string;  // unique identifier ie: FEA-1
     public type: TaskType;
+    public status: TaskStatus;
     public createdOn: any;
     public createdBy: User;
     public lastUpdatedOn: any;
@@ -15,11 +16,19 @@ export class TaskSummary {
     constructor(public title: string) { }
 }
 
+export class TaskParent {
+    constructor(
+        public projectKey: string,
+        public epicIndex?: number,
+        public featureIndex?: number,
+    ) {}
+}
+
 export class Task extends TaskSummary {
     public static COLLECTION_NAME = 'tasks';
     public static SEQUENCE_COLLECTION_NAME = Task.COLLECTION_NAME + '/seq';
     
-    public status: TaskStatus;
+    public parent: TaskParent;
     public points: number;
     public priority: TaskPriority;
     public description: string;
@@ -54,6 +63,7 @@ export function task2TaskSummary(task: Task): TaskSummary {
     if (task.key) result.key = task.key;
     if (task.identifier) result.identifier = task.identifier;
     if (task.type) result.type = task.type;
+    if (task.status) result.status = task.status;
     if (task.createdOn) result.createdOn = task.createdOn;
     if (task.createdBy) result.createdBy = task.createdBy;
     if (task.lastUpdatedOn) result.lastUpdatedOn = task.lastUpdatedOn;
@@ -65,5 +75,6 @@ export function taskSummaryUpdatesFromTaskUpdate(taskUpdate: TaskUpdate): any {
     let result: any = { };
     if (taskUpdate.title) result.title = taskUpdate.title;
     if (taskUpdate.type) result.type = taskUpdate.type;
+    if (taskUpdate.status) result.status = taskUpdate.status;
     return result;
 }

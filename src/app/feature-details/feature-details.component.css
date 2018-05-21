@@ -18,3 +18,8 @@ form > mat-form-field {
 .data-line {
     margin: 30px 0 30px 0;
 }
+
+.deleted-task {
+    color: red;
+    text-decoration: line-through;
+}

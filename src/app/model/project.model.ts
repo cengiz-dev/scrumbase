@@ -2,11 +2,13 @@ import { ProjectSettings, TaskPriorityScheme, TaskPointScheme } from "./project-
 import { Epic } from "./epic.model";
 import { Sprint } from "./sprint.model";
 import { User } from "./user.model";
+import { TaskSummary } from "./task.model";
 
 export class Project {
     public description: string;
     public settings: ProjectSettings;
     public epics: Epic[];
+    public tasks: TaskSummary[];
     public sprints: Sprint[];
     public createdOn: any;
     public createdBy: User;

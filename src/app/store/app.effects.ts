@@ -23,6 +23,7 @@ import {
   UpdateTask,
   GetTask,
   SetTask,
+  DeleteTask,
 } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
@@ -152,6 +153,21 @@ export class ProjectsEffects {
       const dataUpdate$ = user$.pipe(
         mergeMap(user => this.dataService.updateTask(action.payload.project, action.payload.taskKey, action.payload.updatedTask, action.payload.epicIndex,
           action.payload.featureIndex, action.payload.taskIndex, user))
+      );
+      return dataUpdate$.pipe(
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err)))
+      );
+    })
+  );
+
+  @Effect()
+  deleteTask$: Observable<AllProjectsActions> = this.actions$.pipe(
+    ofType(ProjectsActionType.DELETE_TASK),
+    mergeMap((action: DeleteTask) => {
+      const user$ = this.authService.getUser();
+      const dataUpdate$ = user$.pipe(
+        mergeMap(user => this.dataService.deleteTask(action.payload.project, action.payload.taskKey, user))
       );
       return dataUpdate$.pipe(
         map(() => new GetProjects()),

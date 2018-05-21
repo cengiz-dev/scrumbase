@@ -39,9 +39,15 @@
 
         <mat-list>
           <h3 mat-subheader>Tasks</h3>
-          <mat-list-item *ngFor="let task of currentFeature.tasks; let taskIndex = index" (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, routeParams.featureIndex, taskIndex)">
+          <mat-list-item *ngFor="let task of currentFeature.tasks; let taskIndex = index"
+              (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, routeParams.featureIndex, taskIndex)">
             <mat-icon mat-list-icon>folder</mat-icon>
-            <h4 mat-line>Title: {{task.title}}</h4>
+            <h4 mat-line [ngClass]="{'deleted-task': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+            <span class="fill-remaining-space"></span>
+            <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'"
+                (click)="onTaskDeleted($event, currentProject, task.key)">
+              <mat-icon aria-label="Delete task button">delete</mat-icon>
+            </button>
           </mat-list-item>
           <mat-expansion-panel (opened)="addTaskPanelOpenState = true" (closed)="addTaskPanelOpenState = false" [expanded]="addTaskPanelOpenState">
             <mat-expansion-panel-header>

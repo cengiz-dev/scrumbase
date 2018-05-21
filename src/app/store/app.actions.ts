@@ -19,6 +19,7 @@ export enum ProjectsActionType {
   GET_TASK = 'GET_TASK',
   ADD_TASK = 'ADD_TASK',
   UPDATE_TASK = 'UPDATE_TASK',
+  DELETE_TASK = 'DELETE_TASK',
   SWITCH_EDIT_MODE = 'SWITCH_EDIT_MODE',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
@@ -101,6 +102,12 @@ export class UpdateTask implements Action {
   readonly type = ProjectsActionType.UPDATE_TASK;
 
   constructor(public payload: { project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number, taskIndex: number }) {}
+}
+
+export class DeleteTask implements Action {
+  readonly type = ProjectsActionType.DELETE_TASK;
+
+  constructor(public payload: { project: ProjectRef, taskKey: string }) {}
 }
 
 export class SwitchEditMode implements Action {
