@@ -26,6 +26,7 @@ export class EpicDetailsComponent implements OnInit {
   addedFeature = new Feature('');
   addTaskPanelOpenState: boolean = false;
   addedTask = new Task('');
+  showDeletedTasks = false;
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.viewState$ = this.store.select(getProjectsState);

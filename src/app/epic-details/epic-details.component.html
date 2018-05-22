@@ -29,6 +29,12 @@
             <span class="data data-value">{{ currentEpic?.description }}</span>
           </div>
           <div class="data-line">
+            <span class="data data-label">created on:</span>
+            <span class="data data-value">{{ currentEpic?.createdOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentEpic?.createdBy.displayName }}</span>
+          </div>
+          <div class="data-line">
             <span class="data data-label">last updated on:</span>
             <span class="data data-value">{{ currentEpic?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
             <span class="data data-label">by:</span>
@@ -89,17 +95,18 @@
         </mat-list>
 
         <mat-list>
-          <h3 mat-subheader>Tasks</h3>
-          <mat-list-item *ngFor="let task of currentEpic.tasks; let taskIndex = index"
-              (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, taskIndex)">
-            <mat-icon mat-list-icon>folder</mat-icon>
-            <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
-            <span class="fill-remaining-space"></span>
-            <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'"
-                (click)="onTaskDeleted($event, currentProject, task.key)">
-              <mat-icon aria-label="Delete task button">delete</mat-icon>
-            </button>
-          </mat-list-item>
+          <h3 mat-subheader>Tasks<span class="fill-remaining-space"></span><mat-checkbox [(ngModel)]="showDeletedTasks">Show deleted tasks</mat-checkbox></h3>
+          <ng-container *ngFor="let task of currentEpic.tasks; let taskIndex = index">
+            <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, taskIndex)">
+              <mat-icon mat-list-icon>folder</mat-icon>
+              <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+              <span class="fill-remaining-space"></span>
+              <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'"
+                  (click)="onTaskDeleted($event, currentProject, task.key)">
+                <mat-icon aria-label="Delete task button">delete</mat-icon>
+              </button>
+            </mat-list-item>
+          </ng-container>
           <mat-expansion-panel (opened)="addTaskPanelOpenState = true" (closed)="addTaskPanelOpenState = false" [expanded]="addTaskPanelOpenState">
             <mat-expansion-panel-header>
               Add Task

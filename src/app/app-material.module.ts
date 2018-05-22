@@ -10,6 +10,7 @@ import {
   MatSelectModule,
   MatDialogModule,
   MatMenuModule,
+  MatCheckboxModule,
 } from '@angular/material';
 import { FlexLayoutModule } from "@angular/flex-layout";
 
@@ -25,6 +26,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     MatSelectModule,
     MatDialogModule,
     MatMenuModule,
+    MatCheckboxModule,
     FlexLayoutModule,
   ],
   exports: [
@@ -38,6 +40,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     MatSelectModule,
     MatDialogModule,
     MatMenuModule,
+    MatCheckboxModule,
     FlexLayoutModule,
   ],
 })

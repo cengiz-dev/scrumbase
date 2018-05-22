@@ -23,6 +23,7 @@ export class FeatureDetailsComponent implements OnInit {
   currentFeature$: Observable<Feature>;
   addTaskPanelOpenState: boolean = false;
   addedTask = new Task('');
+  showDeletedTasks = false;
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.viewState$ = this.store.select(getProjectsState);

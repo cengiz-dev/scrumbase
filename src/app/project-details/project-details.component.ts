@@ -29,6 +29,7 @@ export class ProjectDetailsComponent implements OnInit {
   addedEpic = new Epic('');
   addTaskPanelOpenState: boolean = false;
   addedTask = new Task('');
+  showDeletedTasks = false;
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
