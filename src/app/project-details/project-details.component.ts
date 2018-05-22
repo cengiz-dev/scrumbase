@@ -10,6 +10,7 @@ import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef, ProjectUpdate } from '../model/project.model';
 import { TaskPriorityScheme, TaskPointScheme } from '../model/project-settings.model';
 import { Epic } from '../model/epic.model';
+import { Task } from '../model/task.model';
 
 @Component({
   selector: 'app-project-details',
@@ -26,6 +27,8 @@ export class ProjectDetailsComponent implements OnInit {
   pointSchemeValues = TaskPointScheme;
   addEpicPanelOpenState: boolean = false;
   addedEpic = new Epic('');
+  addTaskPanelOpenState: boolean = false;
+  addedTask = new Task('');
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.store.dispatch(new ProjectsActions.GetProjects());
@@ -72,5 +75,21 @@ export class ProjectDetailsComponent implements OnInit {
 
   onEpicSelected(projectIndex: number, epicIndex: number) {
     this.router.navigate(['project', projectIndex, 'epic', epicIndex]);
+  }
+
+  onAddTask(form: NgForm, project: ProjectRef) {
+    this.store.dispatch(new ProjectsActions.AddTask({ project, task: { ...this.addedTask } }));
+    form.resetForm();
+    this.addedTask = new Task('');
+    this.addTaskPanelOpenState = false;
+  }
+
+  onTaskSelected(projectIndex: number, taskIndex: number) {
+    this.router.navigate(['project', projectIndex, 'task', taskIndex]);
+  }
+
+  onTaskDeleted(event: any, project: ProjectRef, taskKey: string) {
+    event.stopPropagation();
+    this.store.dispatch(new ProjectsActions.DeleteTask({ project, taskKey }));
   }
 }

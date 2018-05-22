@@ -7,6 +7,7 @@ import { TaskSummary } from "./task.model";
 export class Project {
     public description: string;
     public settings: ProjectSettings;
+    public taskPrefix: string;
     public epics: Epic[];
     public tasks: TaskSummary[];
     public sprints: Sprint[];

@@ -110,15 +110,19 @@ export const getSelectedTaskSummary = createSelector(
         let result: TaskSummary;
         if (routerState) {
             let index: number = routerState.state.params.index;
+            let taskIndex: number = routerState.state.params.taskIndex;
             if (index < projects.length) {
                 let project = projects[index];
                 let epicIndex: number = routerState.state.params.epicIndex;
-                if (project.epics && epicIndex < project.epics.length) {
+                if (epicIndex === undefined) {
+                    result = project.tasks[taskIndex];
+                } else if (project.epics && epicIndex < project.epics.length) {
                     let epic = project.epics[epicIndex];
                     let featureIndex: number = routerState.state.params.featureIndex;
-                    if (epic.features && featureIndex < epic.features.length) {
+                    if (featureIndex === undefined) {
+                        result = epic.tasks[taskIndex];
+                    } else if (epic.features && featureIndex < epic.features.length) {
                         let feature = epic.features[featureIndex];
-                        let taskIndex: number = routerState.state.params.taskIndex;
                         if (feature.tasks && taskIndex < feature.tasks.length) {
                             result = feature.tasks[taskIndex];
                         }

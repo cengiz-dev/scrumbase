@@ -32,7 +32,9 @@ export class ProjectListComponent implements OnInit {
   }
 
   onCreateProject(form: NgForm) {
-    this.store.dispatch(new ProjectsActions.CreateProject({ ...this.createdProject }));
+    let p = { ...this.createdProject } as Project;
+    p.settings = { ...this.createdProject.settings };
+    this.store.dispatch(new ProjectsActions.CreateProject(p));
     form.resetForm();
     this.createdProject = new Project('');
     this.createProjectPanelOpenState = false;

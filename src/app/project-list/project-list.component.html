@@ -23,6 +23,14 @@
       </mat-placeholder>
     </mat-form-field>
 
+    <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+      <input matInput required [(ngModel)]="createdProject.taskPrefix" name="taskPrefix" />
+      <mat-placeholder>
+        <mat-icon>edit</mat-icon>
+        <b>Task Prefix</b><i *ngIf="createdProject.title"> - ie. {{ createdProject.title | removeSpaces | slice:0:3 | uppercase }}</i>
+      </mat-placeholder>
+    </mat-form-field>
+
     <mat-form-field>
       <mat-select [(ngModel)]="createdProject.settings.priorityScheme" name="priorityScheme">
         <mat-option *ngFor="let key of prioritySchemeKeys" value="{{prioritySchemeValues[key]}}">{{prioritySchemeValues[key]}}</mat-option>

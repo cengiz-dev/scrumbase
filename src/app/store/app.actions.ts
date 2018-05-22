@@ -95,7 +95,7 @@ export class GetTask implements Action {
 export class AddTask implements Action {
   readonly type = ProjectsActionType.ADD_TASK;
 
-  constructor(public payload: { project: ProjectRef, epicIndex: number, featureIndex: number, task: Task }) {}
+  constructor(public payload: { project: ProjectRef, task: Task, epicIndex?: number, featureIndex?: number }) {}
 }
 
 export class UpdateTask implements Action {

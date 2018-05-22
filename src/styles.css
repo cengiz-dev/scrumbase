@@ -9,3 +9,8 @@ button mat-icon, mat-list-item {
    Every toolbar row uses a flexbox row layout. */
    flex: 1 1 auto;
  }
+
+ .deleted-item-text {
+     color: red;
+     text-decoration: line-through;
+ }

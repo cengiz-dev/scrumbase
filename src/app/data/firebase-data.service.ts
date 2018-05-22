@@ -36,7 +36,11 @@ export class FirebaseDataService extends DataService {
     project.createdBy = user;
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     project.lastUpdatedBy = user;
-    return observableFrom(this.db.list(ProjectRef.COLLECTION_NAME).push(project));
+    return observableFrom(this.db.list(ProjectRef.COLLECTION_NAME).push(project)).pipe(
+      mergeMap(addedProjectRef => {
+        return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${addedProjectRef.key}/${project.taskPrefix}`).update({ count: 0 });
+      })
+    );
   }
 
   updateProjectInBackend(key: string, projectUpdate: ProjectUpdate, user: User): Promise<void> {
@@ -85,15 +89,18 @@ export class FirebaseDataService extends DataService {
     feature.createdOn = feature.lastUpdatedOn = epic.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     feature.createdBy = feature.lastUpdatedBy = epic.lastUpdatedBy = user;
 
-    return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}`).snapshotChanges().pipe(take(1), map(a => {
-      const data = a.payload.val();
-      if (data && data[feature.taskPrefix]) {
-        throw { message: `Prefix ${feature.taskPrefix} already exists for project ${project.title}` };
-      }
-      let features = epic.features ? [...epic.features, feature] : [feature];
-      this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}`).update({ count: 0 })
-        .then(() => this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}`).update({ features: features }));
-    }), );
+    return this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}`).snapshotChanges().pipe(
+      take(1),
+      map(a => {
+        const data = a.payload.val();
+        if (data && data[feature.taskPrefix]) {
+          throw { message: `Prefix ${feature.taskPrefix} already exists for project ${project.title}` };
+        }
+        let features = epic.features ? [...epic.features, feature] : [feature];
+        this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}`).update({ count: 0 })
+          .then(() => this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}`).update({ features: features }));
+      })
+    );
   }
 
   updateFeatureInBackend(project: ProjectRef, updatedFeature: FeatureUpdate, epicIndex: number, featureIndex: number, user: User): Promise<void> {
@@ -124,27 +131,85 @@ export class FirebaseDataService extends DataService {
   }
 
   addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
-    let feature: Feature;
-    if (!project.epics || epicIndex >= project.epics.length) {
-      throw { message: "Epic index out of bounds. Can't add task." };
-    } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
-      throw { message: "Feature index out of bounds. Can't add task." };
+    if (epicIndex != 0 && !epicIndex) {
+      return this.addTaskToProject(project, task, user);
     } else {
-      feature = project.epics[epicIndex].features[featureIndex];
+      if (!project.epics || epicIndex >= project.epics.length) {
+        throw { message: "Epic index out of bounds. Can't add task." };
+      }
+      if (featureIndex != 0 && !featureIndex) {
+        return this.addTaskToEpic(project, epicIndex, task, user);
+      } else {
+        if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
+          throw { message: "Feature index out of bounds. Can't add task." };
+        }
+        return this.addTaskToFeature(project, epicIndex, featureIndex, task, user);
+      }
     }
-    task.parent = new TaskParent(project.key, epicIndex, featureIndex);
+  }
+
+  addTaskToProject(project: ProjectRef, task: Task, user: User): Observable<any> {
+    task.parent = { projectKey: project.key };
+    task.createdOn = task.lastUpdatedOn = project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    task.createdBy = task.lastUpdatedBy = project.lastUpdatedBy = user;
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    let countRef = this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${project.taskPrefix}/count`).query.ref;
+    return observableFrom(
+      countRef.transaction(count => count ? ++count : 1)
+        .then((result: TransactionResult) => {
+          task.identifier = `${project.taskPrefix}-${result.snapshot.val()}`;
+          return this.db.list(Task.COLLECTION_NAME).push(task);
+        })
+        .then(addedTaskRef => {
+          task.key = addedTaskRef.key;
+          let tasks: Array<TaskSummary> = project.tasks ? [...project.tasks, task2TaskSummary(task)] : [task2TaskSummary(task)];
+          this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}`).update({ tasks: tasks });
+        })
+    );
+  }
+
+  addTaskToEpic(project: ProjectRef, epicIndex: number, task: Task, user: User): Observable<any> {
+    let epic = project.epics[epicIndex];
+    task.parent = {
+      projectKey: project.key,
+      epicIndex: epicIndex,
+    };
+    task.createdOn = task.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    task.createdBy = task.lastUpdatedBy = user;
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    let countRef = this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${epic.taskPrefix}/count`).query.ref;
+    return observableFrom(
+      countRef.transaction(count => count ? ++count : 1)
+        .then((result: TransactionResult) => {
+          task.identifier = `${epic.taskPrefix}-${result.snapshot.val()}`;
+          return this.db.list(Task.COLLECTION_NAME).push(task);
+        })
+        .then(addedTaskRef => {
+          task.key = addedTaskRef.key;
+          let tasks: Array<TaskSummary> = epic.tasks ? [...epic.tasks, task2TaskSummary(task)] : [task2TaskSummary(task)];
+          this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}`)
+            .update({ tasks: tasks, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user });
+        })
+    );
+  }
+
+  addTaskToFeature(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
+    let feature = project.epics[epicIndex].features[featureIndex];
+    task.parent = {
+      projectKey: project.key,
+      epicIndex: epicIndex,
+      featureIndex: featureIndex,
+    };
     task.createdOn = task.lastUpdatedOn = feature.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     task.createdBy = task.lastUpdatedBy = feature.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     let countRef = this.db.object(`${Task.SEQUENCE_COLLECTION_NAME}/${project.key}/${feature.taskPrefix}/count`).query.ref;
     return observableFrom(
       countRef.transaction(count => count ? ++count : 1)
-        .then((result: TransactionResult) => result.snapshot.val())
-        .then(val => {
-          task.identifier = `${feature.taskPrefix}-${val}`;
-          return task;
+        .then((result: TransactionResult) => {
+          task.identifier = `${feature.taskPrefix}-${result.snapshot.val()}`;
+          return this.db.list(Task.COLLECTION_NAME).push(task);
         })
-        .then(taskToAdd => this.db.list(Task.COLLECTION_NAME).push(taskToAdd))
         .then(addedTaskRef => {
           task.key = addedTaskRef.key;
           let tasks: Array<TaskSummary> = feature.tasks ? [...feature.tasks, task2TaskSummary(task)] : [task2TaskSummary(task)];
@@ -156,18 +221,56 @@ export class FirebaseDataService extends DataService {
 
   updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
     taskIndex: number, user: User): Observable<any> {
-    if (!project.epics || epicIndex >= project.epics.length) {
-      throw { message: "Epic index out of bounds. Can't update task." };
-    } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
-      throw { message: "Feature index out of bounds. Can't update task." };
-    } else if (!project.epics[epicIndex].features[featureIndex].tasks || taskIndex >= project.epics[epicIndex].features[featureIndex].tasks.length) {
+    if (epicIndex != 0 && !epicIndex) {
+      return this.updateProjectTask(project, taskKey, updatedTask, taskIndex, user);
+    } else {
+      if (!project.epics || epicIndex >= project.epics.length) {
+        throw { message: "Epic index out of bounds. Can't update task." };
+      }
+      if (featureIndex != 0 && !featureIndex) {
+        return this.updateEpicTask(project, taskKey, updatedTask, epicIndex, taskIndex, user);
+      } else {
+        if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
+          throw { message: "Feature index out of bounds. Can't update task." };
+        }
+        return this.updateFeatureTask(project, taskKey, updatedTask, epicIndex, featureIndex, taskIndex, user);
+      }
+    }
+  }
+
+  updateFeatureTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
+    taskIndex: number, user: User): Observable<any> {
+    if (!project.epics[epicIndex].features[featureIndex].tasks || taskIndex >= project.epics[epicIndex].features[featureIndex].tasks.length) {
       throw { message: "Task index out of bounds. Can't update task." };
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    console.log(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`, ...taskSummaryUpdatesFromTaskUpdate(updatedTask))
     return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
       merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`)
+        .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
+    );
+  }
+
+  updateEpicTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, taskIndex: number, user: User): Observable<any> {
+    if (!project.epics[epicIndex].tasks || taskIndex >= project.epics[epicIndex].tasks.length) {
+      throw { message: "Task index out of bounds. Can't update task." };
+    }
+    const tasks = this.db.list(Task.COLLECTION_NAME);
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+      merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/tasks/${taskIndex}`)
+        .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
+    );
+  }
+
+  updateProjectTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, taskIndex: number, user: User): Observable<any> {
+    if (!project.tasks || taskIndex >= project.tasks.length) {
+      throw { message: "Task index out of bounds. Can't update task." };
+    }
+    const tasks = this.db.list(Task.COLLECTION_NAME);
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+      merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/tasks/${taskIndex}`)
         .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
     );
   }
@@ -175,48 +278,80 @@ export class FirebaseDataService extends DataService {
   deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any> {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return this.db.object(`${Task.COLLECTION_NAME}/${taskKey}`).snapshotChanges().pipe(
-        take(1),
-        map(action => ({ ...action.payload.val(), key: action.payload.key } as Task)),
-        mergeMap(task => {
-          let epicIndex: number, featureIndex: number, taskIndex: number;
-          let tasks: Array<TaskSummary>;
-          if (task.parent.epicIndex) {
-            epicIndex = task.parent.epicIndex;
-            if (!project.epics || epicIndex >= project.epics.length) {
-              throw { message: "Epic index out of bounds. Can't update task." };
-            } else if (task.parent.featureIndex) {
-              featureIndex = task.parent.featureIndex;
-              if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
-                throw { message: "Feature index out of bounds. Can't update task." };
-              }
-              tasks = project.epics[epicIndex].features[featureIndex].tasks;
-            } else {
-              tasks = project.epics[epicIndex].tasks;
+      take(1),
+      map(action => ({ ...action.payload.val(), key: action.payload.key } as Task)),
+      mergeMap(task => {
+        let updates = {
+          status: TaskStatus.DELETED,
+          lastUpdatedOn: database.ServerValue.TIMESTAMP,
+          lastUpdatedBy: user
+        };
+        let epicIndex: number, featureIndex: number, taskIndex: number;
+        let tasks: Array<TaskSummary>;
+        epicIndex = task.parent.epicIndex;
+        if (epicIndex === 0 || epicIndex) {
+          if (!project.epics || epicIndex >= project.epics.length) {
+            throw { message: "Epic index out of bounds. Can't update task." };
+          }
+          featureIndex = task.parent.featureIndex;
+          if (featureIndex === 0 || featureIndex) {
+            if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
+              throw { message: "Feature index out of bounds. Can't update task." };
             }
+            return this.deleteFeatureTask(project.key, project.epics[epicIndex].features[featureIndex].tasks,
+              taskKey, updates, epicIndex, featureIndex, user);
           } else {
-            tasks = project.tasks;
+            return this.deleteEpicTask(project.key, project.epics[epicIndex].tasks, taskKey, updates, epicIndex, user);
           }
+        } else {
+          return this.deleteProjectTask(project.key, project.tasks, taskKey, updates, user);
+        }
+      })
+    );
+  }
 
-          if (!tasks) {
-            throw { message: "Task index out of bounds. Can't update task." };
-          } else {
-            for (let i = 0; i < tasks.length; i++) {
-              if (task.key == taskKey) {
-                taskIndex = i;
-                break;
-              }
-            }
-          }
-          
-          if (taskIndex === undefined) {
-            throw { message: "Task not found." };
-          }
-
-          return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, { status: TaskStatus.DELETED, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user }))
-              .pipe(
-                merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`).update({ status: TaskStatus.DELETED }))
-              );
-        })
+  deleteFeatureTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, featureIndex: number, user: User): Observable<any> {
+    let taskIndex = this.getTaskIndex(tasks, taskKey);
+    return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
+      .pipe(
+        merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${projectKey}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`).update(updates))
       );
+  }
+
+  deleteEpicTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, user: User): Observable<any> {
+    let taskIndex = this.getTaskIndex(tasks, taskKey);
+    return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
+      .pipe(
+        merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${projectKey}/epics/${epicIndex}/tasks/${taskIndex}`).update(updates))
+      );
+  }
+
+  deleteProjectTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, user: User): Observable<any> {
+    let taskIndex = this.getTaskIndex(tasks, taskKey);
+
+    return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
+      .pipe(
+        merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${projectKey}/tasks/${taskIndex}`).update(updates))
+      );
+  }
+
+  private getTaskIndex(tasks: Array<TaskSummary>, taskKey: string): number {
+    let taskIndex: number;
+    if (!tasks) {
+      throw { message: "Task index out of bounds. Can't update task." };
+    } else {
+      for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].key == taskKey) {
+          taskIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (taskIndex === undefined) {
+      throw { message: "Task not found." };
+    }
+
+    return taskIndex;
   }
 }

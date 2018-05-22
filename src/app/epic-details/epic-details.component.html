@@ -53,7 +53,7 @@
               Please fill out the feature information and click the add button.
             </mat-panel-description>
 
-            <form (ngSubmit)="onAddFeature(f, currentProject, routeParams.epicIndex)" #f="ngForm">
+            <form (ngSubmit)="onAddFeature(f1, currentProject, routeParams.epicIndex)" #f1="ngForm">
               <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
                 <input matInput required [(ngModel)]="addedFeature.title" name="title" />
                 <mat-placeholder>
@@ -80,8 +80,55 @@
               </mat-form-field>
 
               <mat-action-row>
-                <button mat-icon-button color="primary" title="add feature" type="submit" [disabled]="!f.valid">
+                <button mat-icon-button color="primary" title="add feature" type="submit" [disabled]="!f1.valid">
                   <mat-icon aria-label="Add feature button">add</mat-icon>
+                </button>
+              </mat-action-row>
+            </form>
+          </mat-expansion-panel>
+        </mat-list>
+
+        <mat-list>
+          <h3 mat-subheader>Tasks</h3>
+          <mat-list-item *ngFor="let task of currentEpic.tasks; let taskIndex = index"
+              (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, taskIndex)">
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+            <span class="fill-remaining-space"></span>
+            <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'"
+                (click)="onTaskDeleted($event, currentProject, task.key)">
+              <mat-icon aria-label="Delete task button">delete</mat-icon>
+            </button>
+          </mat-list-item>
+          <mat-expansion-panel (opened)="addTaskPanelOpenState = true" (closed)="addTaskPanelOpenState = false" [expanded]="addTaskPanelOpenState">
+            <mat-expansion-panel-header>
+              Add Task
+            </mat-expansion-panel-header>
+            <mat-panel-description *ngIf="addTaskPanelOpenState">
+              Please fill out the task information and click the add button.
+            </mat-panel-description>
+
+            <form (ngSubmit)="onAddTask(f2, currentProject, routeParams.epicIndex)" #f2="ngForm">
+              <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+                <input matInput required [(ngModel)]="addedTask.title" name="title">
+                <mat-placeholder>
+                  <mat-icon>edit</mat-icon>
+                  <b>Task Title</b>
+                </mat-placeholder>
+              </mat-form-field>
+
+              <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+                <textarea matInput required matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" [(ngModel)]="addedTask.description"
+                  name="description"></textarea>
+                <mat-placeholder>
+                  <mat-icon>edit</mat-icon>
+                  <b>Task Description</b>
+                </mat-placeholder>
+              </mat-form-field>
+
+              <mat-action-row>
+                <button mat-icon-button color="primary" title="add task" type="submit" [disabled]="!f2.valid">
+                  <mat-icon aria-label="Add task button">add</mat-icon>
                 </button>
               </mat-action-row>
             </form>

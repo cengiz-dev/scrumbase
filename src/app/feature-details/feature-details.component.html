@@ -42,7 +42,7 @@
           <mat-list-item *ngFor="let task of currentFeature.tasks; let taskIndex = index"
               (click)="onTaskSelected(routeParams.index, routeParams.epicIndex, routeParams.featureIndex, taskIndex)">
             <mat-icon mat-list-icon>folder</mat-icon>
-            <h4 mat-line [ngClass]="{'deleted-task': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+            <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'"
                 (click)="onTaskDeleted($event, currentProject, task.key)">

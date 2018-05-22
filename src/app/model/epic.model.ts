@@ -4,6 +4,7 @@ import { TaskSummary } from "./task.model";
 
 export class Epic {
     public description: string;
+    public taskPrefix: string;
     public features: Feature[];
     public tasks: TaskSummary[];
     public createdOn: any;

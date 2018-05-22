@@ -10,6 +10,7 @@ import * as ProjectsActions from '../store/app.actions';
 import { ProjectRef } from '../model/project.model';
 import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature } from '../model/feature.model';
+import { Task } from '../model/task.model';
 
 @Component({
   selector: 'app-epic-details',
@@ -23,6 +24,8 @@ export class EpicDetailsComponent implements OnInit {
   currentEpic$: Observable<Epic>;
   addFeaturePanelOpenState: boolean = false;
   addedFeature = new Feature('');
+  addTaskPanelOpenState: boolean = false;
+  addedTask = new Task('');
 
   constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
     this.viewState$ = this.store.select(getProjectsState);
@@ -69,5 +72,21 @@ export class EpicDetailsComponent implements OnInit {
 
   onFeatureSelected(projectIndex: number, epicIndex: number, featureIndex: number) {
     this.router.navigate(['project', projectIndex, 'epic', epicIndex, 'feature', featureIndex]);
+  }
+
+  onAddTask(form: NgForm, project: ProjectRef, epicIndex: number) {
+    this.store.dispatch(new ProjectsActions.AddTask({ project, task: { ...this.addedTask }, epicIndex }));
+    form.resetForm();
+    this.addedTask = new Task('');
+    this.addTaskPanelOpenState = false;
+  }
+
+  onTaskSelected(projectIndex: number, epicIndex: number, taskIndex: number) {
+    this.router.navigate(['project', projectIndex, 'epic', epicIndex, 'task', taskIndex]);
+  }
+
+  onTaskDeleted(event: any, project: ProjectRef, taskKey: string) {
+    event.stopPropagation();
+    this.store.dispatch(new ProjectsActions.DeleteTask({ project, taskKey }));
   }
 }

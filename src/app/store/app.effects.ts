@@ -28,27 +28,26 @@ import {
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+import { Project } from '../model/project.model';
 
 @Injectable()
 export class ProjectsEffects {
   @Effect()
   getProjects$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.GET_PROJECTS).pipe(
-    switchMap((action: GetProjects) => this.dataService.getProjects()),
-    map(projects => new SetProjects(projects)),);
+      switchMap((action: GetProjects) => this.dataService.getProjects()),
+      map(projects => new SetProjects(projects))
+    );
 
   @Effect()
   createProject$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.CREATE_PROJECT).pipe(
-    switchMap((action: CreateProject) => {
-      const user$ = this.authService.getUser();
-      const create$ = user$.pipe(
-        mergeMap(user => this.dataService.addProject(action.payload, user))
-      );
-      return create$.pipe(
+      switchMap((action: CreateProject) => this.authService.getUser().pipe(
+        mergeMap(user => this.dataService.addProject(action.payload as Project, user)),
         map(() => new GetProjects()),
         catchError(err => of(new BackendError(err))))
-    }));
+      )
+    );
 
   @Effect()
   updateProject$: Observable<AllProjectsActions> = this.actions$.pipe(
@@ -68,16 +67,16 @@ export class ProjectsEffects {
   @Effect()
   addEpic$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.ADD_EPIC).pipe(
-    switchMap((action: AddEpic) => {
-      const user$ = this.authService.getUser();
-      const dataUpdate$ = user$.pipe(
-        mergeMap(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
-      );
-      return dataUpdate$.pipe(
-        map(() => new GetProjects()),
-        catchError(err => of(new BackendError(err)))
-      );
-    }));
+      switchMap((action: AddEpic) => {
+        const user$ = this.authService.getUser();
+        const dataUpdate$ = user$.pipe(
+          mergeMap(user => this.dataService.addEpic(action.payload.project, action.payload.epic, user))
+        );
+        return dataUpdate$.pipe(
+          map(() => new GetProjects()),
+          catchError(err => of(new BackendError(err)))
+        );
+      }));
 
   @Effect()
   updateEpic$: Observable<AllProjectsActions> = this.actions$.pipe(
@@ -97,16 +96,16 @@ export class ProjectsEffects {
   @Effect()
   addFeature$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.ADD_FEATURE).pipe(
-    switchMap((action: AddFeature) => {
-      const user$ = this.authService.getUser();
-      const dataUpdate$ = user$.pipe(
-        mergeMap(user => this.dataService.addFeature(action.payload.project, action.payload.epicIndex, action.payload.feature, user))
-      );
-      return dataUpdate$.pipe(
-        map(() => new GetProjects()),
-        catchError(err => of(new BackendError(err)))
-      );
-    }));
+      switchMap((action: AddFeature) => {
+        const user$ = this.authService.getUser();
+        const dataUpdate$ = user$.pipe(
+          mergeMap(user => this.dataService.addFeature(action.payload.project, action.payload.epicIndex, action.payload.feature, user))
+        );
+        return dataUpdate$.pipe(
+          map(() => new GetProjects()),
+          catchError(err => of(new BackendError(err)))
+        );
+      }));
 
   @Effect()
   updateFeature$: Observable<AllProjectsActions> = this.actions$.pipe(
@@ -127,23 +126,23 @@ export class ProjectsEffects {
   @Effect()
   getTask$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.GET_TASK).pipe(
-    switchMap((action: GetTask) => this.dataService.getTask(action.payload)),
-    map(task => new SetTask(task)),);
+      switchMap((action: GetTask) => this.dataService.getTask(action.payload)),
+      map(task => new SetTask(task)), );
 
   @Effect()
   addTask$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.ADD_TASK).pipe(
-    switchMap((action: AddTask) => {
-      const user$ = this.authService.getUser();
-      const dataUpdate$ = user$.pipe(
-        mergeMap(user => this.dataService.addTask(action.payload.project, action.payload.epicIndex, action.payload.featureIndex,
-          action.payload.task, user))
-      );
-      return dataUpdate$.pipe(
-        map(() => new GetProjects()),
-        catchError(err => of(new BackendError(err)))
-      );
-    }));
+      switchMap((action: AddTask) => {
+        const user$ = this.authService.getUser();
+        const dataUpdate$ = user$.pipe(
+          mergeMap(user => this.dataService.addTask(action.payload.project, action.payload.epicIndex, action.payload.featureIndex,
+            action.payload.task, user))
+        );
+        return dataUpdate$.pipe(
+          map(() => new GetProjects()),
+          catchError(err => of(new BackendError(err)))
+        );
+      }));
 
   @Effect()
   updateTask$: Observable<AllProjectsActions> = this.actions$.pipe(

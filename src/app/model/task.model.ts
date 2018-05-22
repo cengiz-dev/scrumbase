@@ -8,20 +8,16 @@ export class TaskSummary {
     public identifier: string;  // unique identifier ie: FEA-1
     public type: TaskType;
     public status: TaskStatus;
-    public createdOn: any;
-    public createdBy: User;
     public lastUpdatedOn: any;
     public lastUpdatedBy: User;
 
     constructor(public title: string) { }
 }
 
-export class TaskParent {
-    constructor(
-        public projectKey: string,
-        public epicIndex?: number,
-        public featureIndex?: number,
-    ) {}
+export interface TaskParent {
+    projectKey: string;
+    epicIndex?: number;
+    featureIndex?: number;
 }
 
 export class Task extends TaskSummary {
@@ -32,6 +28,8 @@ export class Task extends TaskSummary {
     public points: number;
     public priority: TaskPriority;
     public description: string;
+    public createdOn: any;
+    public createdBy: User;
 
     // TODO:
     // assignedTo
@@ -64,8 +62,6 @@ export function task2TaskSummary(task: Task): TaskSummary {
     if (task.identifier) result.identifier = task.identifier;
     if (task.type) result.type = task.type;
     if (task.status) result.status = task.status;
-    if (task.createdOn) result.createdOn = task.createdOn;
-    if (task.createdBy) result.createdBy = task.createdBy;
     if (task.lastUpdatedOn) result.lastUpdatedOn = task.lastUpdatedOn;
     if (task.lastUpdatedBy) result.lastUpdatedBy = task.lastUpdatedBy;
     return result;

@@ -12,7 +12,9 @@ const routes: Routes = [
   { path: 'projects', component: ProjectListComponent },
   {
     path: 'project/:index', component: ProjectComponent, children: [
+      { path: 'task/:taskIndex', component: TaskDetailsComponent },
       { path: 'epic/:epicIndex', component: EpicDetailsComponent },
+      { path: 'epic/:epicIndex/task/:taskIndex', component: TaskDetailsComponent },
       { path: 'epic/:epicIndex/feature/:featureIndex', component: FeatureDetailsComponent },
       { path: 'epic/:epicIndex/feature/:featureIndex/task/:taskIndex', component: TaskDetailsComponent },
       { path: '', pathMatch: 'full', component: ProjectDetailsComponent },
