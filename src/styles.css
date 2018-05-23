@@ -14,3 +14,7 @@ button mat-icon, mat-list-item {
      color: red;
      text-decoration: line-through;
  }
+
+ .bold-text {
+     font-weight: bold;
+ }

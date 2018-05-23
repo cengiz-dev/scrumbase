@@ -20,7 +20,7 @@
     color: dodgerblue;
 }
 
-.breadcrumb-container .breadcrumb + .breadcrumb:before {
+.breadcrumb-container .breadcrumb+.breadcrumb:before {
     content: ">";
     margin-right: 15px;
 }
@@ -31,4 +31,17 @@
 
 .breadcrumb:last-child {
     color: black;
+}
+
+.active-button::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background-color: white;
+    opacity: 0.25;
 }

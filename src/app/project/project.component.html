@@ -4,9 +4,9 @@
       <h2 class="project-title">{{selectedProject.title}} </h2>
     </a>
     <div fxLayout="row" fxHide fxShow.gt-xs>
-      <a mat-button routerLink="/">sprints</a>
-      <a mat-button routerLink="/project/{{selectedProjectIndex}}/backlog">backlog</a>
-      <a mat-button routerLink="/">collaborators</a>
+      <a mat-button routerLink="/project/{{selectedProjectIndex}}/sprints" routerLinkActive="active-button bold-text">sprints</a>
+      <a mat-button routerLink="/project/{{selectedProjectIndex}}/backlog" routerLinkActive="active-button bold-text">backlog</a>
+      <a mat-button routerLink="/project/{{selectedProjectIndex}}/collaborators" routerLinkActive="active-button bold-text">collaborators</a>
     </div>
 
     <button mat-button [mat-menu-trigger-for]="menu" fxShow fxHide.gt-xs>
@@ -21,9 +21,9 @@
     </span>
   </mat-toolbar>
   <mat-menu x-position="before" #menu>
-    <button mat-menu-item routerLink="/">sprints</button>
-    <button mat-menu-item routerLink="/project/{{selectedProjectIndex}}/backlog">backlog</button>
-    <button mat-menu-item routerLink="/">collaborators</button>
+    <button mat-menu-item routerLink="/project/{{selectedProjectIndex}}/sprints" routerLinkActive="bold-text">sprints</button>
+    <button mat-menu-item routerLink="/project/{{selectedProjectIndex}}/backlog" routerLinkActive="bold-text">backlog</button>
+    <button mat-menu-item routerLink="/project/{{selectedProjectIndex}}/collaborators" routerLinkActive="bold-text">collaborators</button>
   </mat-menu>
   <ng-container *ngIf="(routerState$ | async) as routerState">
     <div class="breadcrumb-container" *ngIf="(breadcrumbs$ | async) as breadcrumbs">
