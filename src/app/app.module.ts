@@ -28,6 +28,7 @@ import { FeatureDetailsComponent } from './feature-details/feature-details.compo
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { RemoveSpacesPipe } from './shared/remove-spaces.pipe';
 import { AppMaterialModule } from './app-material.module';
+import { BacklogComponent } from './backlog/backlog.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { AppMaterialModule } from './app-material.module';
     FeatureDetailsComponent,
     TaskDetailsComponent,
     RemoveSpacesPipe,
+    BacklogComponent,
   ],
   imports: [
     BrowserModule,

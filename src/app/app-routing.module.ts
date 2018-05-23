@@ -7,6 +7,7 @@ import { ProjectDetailsComponent } from './project-details/project-details.compo
 import { EpicDetailsComponent } from './epic-details/epic-details.component';
 import { FeatureDetailsComponent } from './feature-details/feature-details.component';
 import { TaskDetailsComponent } from './task-details/task-details.component';
+import { BacklogComponent } from './backlog/backlog.component';
 
 const routes: Routes = [
   { path: 'projects', component: ProjectListComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'epic/:epicIndex/task/:taskIndex', component: TaskDetailsComponent },
       { path: 'epic/:epicIndex/feature/:featureIndex', component: FeatureDetailsComponent },
       { path: 'epic/:epicIndex/feature/:featureIndex/task/:taskIndex', component: TaskDetailsComponent },
+      { path: 'backlog', component: BacklogComponent },
       { path: '', pathMatch: 'full', component: ProjectDetailsComponent },
     ]
   },
