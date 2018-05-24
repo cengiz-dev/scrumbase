@@ -30,6 +30,7 @@ import { RemoveSpacesPipe } from './shared/remove-spaces.pipe';
 import { AppMaterialModule } from './app-material.module';
 import { BacklogComponent } from './backlog/backlog.component';
 import { SprintsComponent } from './sprints/sprints.component';
+import { SprintDetailsComponent } from './sprint-details/sprint-details.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { SprintsComponent } from './sprints/sprints.component';
     RemoveSpacesPipe,
     BacklogComponent,
     SprintsComponent,
+    SprintDetailsComponent,
   ],
   imports: [
     BrowserModule,

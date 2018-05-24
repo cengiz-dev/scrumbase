@@ -1,47 +1,49 @@
-<ng-container *ngIf="(currentProject$ | async) as currentProject">
-  <mat-expansion-panel (opened)="createSprintPanelOpenState = true" (closed)="createSprintPanelOpenState = false" [expanded]="createSprintPanelOpenState">
-    <mat-expansion-panel-header>
-      Create Sprint
-    </mat-expansion-panel-header>
-    <mat-panel-description *ngIf="createSprintPanelOpenState">
-      Please fill out the sprint data and click the create button.
-    </mat-panel-description>
+<ng-container *ngIf="(routeParams$ | async) as routeParams">
+  <ng-container *ngIf="(currentProject$ | async) as currentProject">
+    <mat-expansion-panel (opened)="createSprintPanelOpenState = true" (closed)="createSprintPanelOpenState = false" [expanded]="createSprintPanelOpenState">
+      <mat-expansion-panel-header>
+        Create Sprint
+      </mat-expansion-panel-header>
+      <mat-panel-description *ngIf="createSprintPanelOpenState">
+        Please fill out the sprint data and click the create button.
+      </mat-panel-description>
 
-    <form (ngSubmit)="onCreateSprint(f, currentProject)" #f="ngForm">
-      <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
-        <input matInput required [(ngModel)]="createdSprint.title" name="title">
-        <mat-placeholder>
-          <mat-icon>edit</mat-icon>
-          <b>Sprint Title</b>
-        </mat-placeholder>
-      </mat-form-field>
+      <form (ngSubmit)="onCreateSprint(f, currentProject)" #f="ngForm">
+        <mat-form-field hideRequiredMarker="false" floatLabel="'auto'">
+          <input matInput required [(ngModel)]="createdSprint.title" name="title">
+          <mat-placeholder>
+            <mat-icon>edit</mat-icon>
+            <b>Sprint Title</b>
+          </mat-placeholder>
+        </mat-form-field>
 
-      <mat-form-field>
-        <input matInput [matDatepicker]="pickerStart" placeholder="Choose a start date" [(ngModel)]="createdSprint.startTime" name="startTime">
-        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerStart></mat-datepicker>
-      </mat-form-field>
+        <mat-form-field>
+          <input matInput [matDatepicker]="pickerStart" placeholder="Choose a start date" [(ngModel)]="createdSprint.startTime" name="startTime">
+          <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
 
-      <mat-form-field>
-        <input matInput [matDatepicker]="pickerEnd" placeholder="Choose an end date" [(ngModel)]="createdSprint.endTime" name="endTime">
-        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-        <mat-datepicker #pickerEnd></mat-datepicker>
-      </mat-form-field>
+        <mat-form-field>
+          <input matInput [matDatepicker]="pickerEnd" placeholder="Choose an end date" [(ngModel)]="createdSprint.endTime" name="endTime">
+          <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
 
-      <mat-action-row>
-        <button mat-icon-button color="primary" title="create sprint" type="submit" [disabled]="!f.valid">
-          <mat-icon aria-label="Create sprint button">save</mat-icon>
-        </button>
-      </mat-action-row>
-    </form>
-  </mat-expansion-panel>
+        <mat-action-row>
+          <button mat-icon-button color="primary" title="create sprint" type="submit" [disabled]="!f.valid">
+            <mat-icon aria-label="Create sprint button">save</mat-icon>
+          </button>
+        </mat-action-row>
+      </form>
+    </mat-expansion-panel>
 
-  <mat-list>
-    <h3 mat-subheader>Project Sprints</h3>
-    <mat-list-item *ngFor="let s of currentProject.sprints; let i = index" (click)="onSprintSelected(i)">
-      <mat-icon mat-list-icon>folder</mat-icon>
-      <h4 mat-line>Title: {{s.title}}</h4>
-      <p mat-line> From: {{s.startTime | date:'d-MMM-yyyy'}} - To: {{s.endTime | date:'d-MMM-yyyy'}} </p>
-    </mat-list-item>
-  </mat-list>
+    <mat-list>
+      <h3 mat-subheader>Project Sprints</h3>
+      <mat-list-item *ngFor="let s of currentProject.sprints; let i = index" (click)="onSprintSelected(routeParams.index, i)">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <h4 mat-line>Title: {{s.title}}</h4>
+        <p mat-line> From: {{s.startTime | date:'d-MMM-yyyy'}} - To: {{s.endTime | date:'d-MMM-yyyy'}} </p>
+      </mat-list-item>
+    </mat-list>
+  </ng-container>
 </ng-container>
