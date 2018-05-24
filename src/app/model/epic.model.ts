@@ -12,8 +12,6 @@ export class Epic {
     public lastUpdatedOn: any;
     public lastUpdatedBy: User;
 
-    // TODO: public tasks: Task[] ?
-
     constructor(public title: string) { }
 }
 

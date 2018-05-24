@@ -9,6 +9,7 @@ import { User } from '../model/user.model';
 import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskUpdate } from '../model/task.model';
+import { Sprint } from '../model/sprint.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -55,7 +56,7 @@ export abstract class DataService {
     public addProject(project: Project, user: User): Observable<any> {
         this.lastRefresh = 0;
 
-        return this.addProjectToBackend(project, user);
+        return this.addProjectInBackend(project, user);
     }
 
     public updateProject(key: string, project: ProjectUpdate, user: User): Promise<void> {
@@ -112,6 +113,12 @@ export abstract class DataService {
         return this.deleteTaskInBackend(project, taskKey, user);
     }
 
+    public addSprint(project: ProjectRef, sprint: Sprint, user: User): Observable<any> {
+        this.lastRefresh = 0;
+
+        return this.addSprintInBackend(project, sprint, user);
+    }
+
     private allowRefresh() {
         let now = Date.now();
         let allow = !this.lastRefresh || now - this.lastRefresh > config.backend.minRefreshFrequency;
@@ -123,7 +130,7 @@ export abstract class DataService {
 
     protected abstract getProjectsFromBackend(): Observable<any>;
 
-    protected abstract addProjectToBackend(project: Project, user: User);
+    protected abstract addProjectInBackend(project: Project, user: User);
 
     protected abstract updateProjectInBackend(key: string, project: ProjectUpdate, user: User): Promise<void>;
 
@@ -143,4 +150,6 @@ export abstract class DataService {
         taskIndex: number, user: User): Observable<any>;
 
     protected abstract deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any>;
+
+    protected abstract addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User);
 }

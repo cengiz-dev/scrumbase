@@ -16,9 +16,6 @@ export class Project {
     public lastUpdatedOn: any;
     public lastUpdatedBy: User;
 
-    // TODO:
-    // tasks ?
-
     constructor(public title: string) {
         // set default values for project settings
         this.settings = new ProjectSettings(TaskPriorityScheme.MOSCOW, TaskPointScheme.FIBONACCI);

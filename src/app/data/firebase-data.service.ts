@@ -13,6 +13,7 @@ import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskSummary, task2TaskSummary, TaskUpdate, taskSummaryUpdatesFromTaskUpdate, TaskParent } from '../model/task.model';
 import { TransactionResult } from '@firebase/database/dist/src/api/TransactionResult';
 import { TaskStatus } from '../model/task-status.model';
+import { Sprint } from '../model/sprint.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -20,7 +21,7 @@ export class FirebaseDataService extends DataService {
     super();
   }
 
-  getProjectsFromBackend(): Observable<ProjectRef[]> {
+  protected getProjectsFromBackend(): Observable<ProjectRef[]> {
     return this.db.list(ProjectRef.COLLECTION_NAME).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
@@ -31,7 +32,7 @@ export class FirebaseDataService extends DataService {
       }));
   }
 
-  addProjectToBackend(project: Project, user: User): Observable<any> {
+  protected addProjectInBackend(project: Project, user: User): Observable<any> {
     project.createdOn = database.ServerValue.TIMESTAMP;
     project.createdBy = user;
     project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
@@ -43,7 +44,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateProjectInBackend(key: string, projectUpdate: ProjectUpdate, user: User): Promise<void> {
+  protected updateProjectInBackend(key: string, projectUpdate: ProjectUpdate, user: User): Promise<void> {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return projects.update(
       key,
@@ -55,7 +56,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void> {
+  protected addEpicInBackend(project: ProjectRef, epic: Epic, user: User): Promise<void> {
     if (!project.epics) {
       project.epics = new Array<Epic>();
     }
@@ -66,7 +67,7 @@ export class FirebaseDataService extends DataService {
     return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, epics: epics });
   }
 
-  updateEpicInBackend(project: ProjectRef, updatedEpic: EpicUpdate, epicIndex: number, user: User): Promise<void> {
+  protected updateEpicInBackend(project: ProjectRef, updatedEpic: EpicUpdate, epicIndex: number, user: User): Promise<void> {
     if (!project.epics || epicIndex >= project.epics.length) {
       throw { message: "Epic index out of bounds. Can't update epic." };
     }
@@ -79,7 +80,7 @@ export class FirebaseDataService extends DataService {
       });
   }
 
-  addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Observable<any> {
+  protected addFeatureInBackend(project: ProjectRef, epicIndex: number, feature: Feature, user: User): Observable<any> {
     let epic: Epic;
     if (project.epics && epicIndex < project.epics.length) {
       epic = project.epics[epicIndex];
@@ -103,7 +104,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateFeatureInBackend(project: ProjectRef, updatedFeature: FeatureUpdate, epicIndex: number, featureIndex: number, user: User): Promise<void> {
+  protected updateFeatureInBackend(project: ProjectRef, updatedFeature: FeatureUpdate, epicIndex: number, featureIndex: number, user: User): Promise<void> {
     if (!project.epics || epicIndex >= project.epics.length) {
       throw { message: "Epic index out of bounds. Can't update feature." };
     } else if (!project.epics[epicIndex].features || featureIndex >= project.epics[epicIndex].features.length) {
@@ -118,7 +119,7 @@ export class FirebaseDataService extends DataService {
       });
   }
 
-  getTaskFromBackend(key: string): Observable<Task | null> {
+  protected getTaskFromBackend(key: string): Observable<Task | null> {
     return this.db.list(Task.COLLECTION_NAME, ref => ref.equalTo(null, key)).snapshotChanges().pipe(
       map(actions => {
         return actions.map(a => {
@@ -130,7 +131,7 @@ export class FirebaseDataService extends DataService {
       map(v => v && v.length > 0 ? v[0] : null), );
   }
 
-  addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
+  protected addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
     if (epicIndex != 0 && !epicIndex) {
       return this.addTaskToProject(project, task, user);
     } else {
@@ -148,7 +149,7 @@ export class FirebaseDataService extends DataService {
     }
   }
 
-  addTaskToProject(project: ProjectRef, task: Task, user: User): Observable<any> {
+  protected addTaskToProject(project: ProjectRef, task: Task, user: User): Observable<any> {
     task.parent = { projectKey: project.key };
     task.createdOn = task.lastUpdatedOn = project.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     task.createdBy = task.lastUpdatedBy = project.lastUpdatedBy = user;
@@ -168,7 +169,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  addTaskToEpic(project: ProjectRef, epicIndex: number, task: Task, user: User): Observable<any> {
+  protected addTaskToEpic(project: ProjectRef, epicIndex: number, task: Task, user: User): Observable<any> {
     let epic = project.epics[epicIndex];
     task.parent = {
       projectKey: project.key,
@@ -193,7 +194,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  addTaskToFeature(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
+  protected addTaskToFeature(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
     let feature = project.epics[epicIndex].features[featureIndex];
     task.parent = {
       projectKey: project.key,
@@ -219,7 +220,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
+  protected updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
     taskIndex: number, user: User): Observable<any> {
     if (epicIndex != 0 && !epicIndex) {
       return this.updateProjectTask(project, taskKey, updatedTask, taskIndex, user);
@@ -238,7 +239,7 @@ export class FirebaseDataService extends DataService {
     }
   }
 
-  updateFeatureTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
+  private updateFeatureTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
     taskIndex: number, user: User): Observable<any> {
     if (!project.epics[epicIndex].features[featureIndex].tasks || taskIndex >= project.epics[epicIndex].features[featureIndex].tasks.length) {
       throw { message: "Task index out of bounds. Can't update task." };
@@ -251,7 +252,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateEpicTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, taskIndex: number, user: User): Observable<any> {
+  private updateEpicTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, taskIndex: number, user: User): Observable<any> {
     if (!project.epics[epicIndex].tasks || taskIndex >= project.epics[epicIndex].tasks.length) {
       throw { message: "Task index out of bounds. Can't update task." };
     }
@@ -263,7 +264,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  updateProjectTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, taskIndex: number, user: User): Observable<any> {
+  private updateProjectTask(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, taskIndex: number, user: User): Observable<any> {
     if (!project.tasks || taskIndex >= project.tasks.length) {
       throw { message: "Task index out of bounds. Can't update task." };
     }
@@ -275,7 +276,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any> {
+  protected deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any> {
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
     return this.db.object(`${Task.COLLECTION_NAME}/${taskKey}`).snapshotChanges().pipe(
       take(1),
@@ -310,7 +311,7 @@ export class FirebaseDataService extends DataService {
     );
   }
 
-  deleteFeatureTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, featureIndex: number, user: User): Observable<any> {
+  private deleteFeatureTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, featureIndex: number, user: User): Observable<any> {
     let taskIndex = this.getTaskIndex(tasks, taskKey);
     return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
       .pipe(
@@ -318,7 +319,7 @@ export class FirebaseDataService extends DataService {
       );
   }
 
-  deleteEpicTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, user: User): Observable<any> {
+  private deleteEpicTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, epicIndex: number, user: User): Observable<any> {
     let taskIndex = this.getTaskIndex(tasks, taskKey);
     return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
       .pipe(
@@ -326,7 +327,7 @@ export class FirebaseDataService extends DataService {
       );
   }
 
-  deleteProjectTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, user: User): Observable<any> {
+  private deleteProjectTask(projectKey: string, tasks: Array<TaskSummary>, taskKey: string, updates: any, user: User): Observable<any> {
     let taskIndex = this.getTaskIndex(tasks, taskKey);
 
     return observableFrom(this.db.list(Task.COLLECTION_NAME).update(taskKey, updates))
@@ -353,5 +354,16 @@ export class FirebaseDataService extends DataService {
     }
 
     return taskIndex;
+  }
+
+  protected addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User) {
+    if (!project.sprints) {
+      project.sprints = new Array<Sprint>();
+    }
+    sprint.createdOn = sprint.lastUpdatedOn = database.ServerValue.TIMESTAMP;
+    sprint.createdBy = sprint.lastUpdatedBy = user;
+    const projects = this.db.list(ProjectRef.COLLECTION_NAME);
+    let sprints = project.sprints ? [ ...project.sprints, sprint ] : [ sprint ];
+    return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, sprints: sprints });
   }
 }

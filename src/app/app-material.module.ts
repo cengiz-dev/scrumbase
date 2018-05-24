@@ -11,6 +11,9 @@ import {
   MatDialogModule,
   MatMenuModule,
   MatCheckboxModule,
+  MatNativeDateModule,
+  MatDatepickerModule,
+  MAT_DATE_LOCALE,
 } from '@angular/material';
 import { FlexLayoutModule } from "@angular/flex-layout";
 
@@ -27,6 +30,8 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     MatDialogModule,
     MatMenuModule,
     MatCheckboxModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
     FlexLayoutModule,
   ],
   exports: [
@@ -41,7 +46,12 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     MatDialogModule,
     MatMenuModule,
     MatCheckboxModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
     FlexLayoutModule,
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
   ],
 })
 export class AppMaterialModule { }

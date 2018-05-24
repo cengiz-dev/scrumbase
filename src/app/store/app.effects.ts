@@ -24,11 +24,13 @@ import {
   GetTask,
   SetTask,
   DeleteTask,
+  CreateSprint,
 } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { Project } from '../model/project.model';
+import { Sprint } from '../model/sprint.model';
 
 @Injectable()
 export class ProjectsEffects {
@@ -174,6 +176,16 @@ export class ProjectsEffects {
       );
     })
   );
+
+  @Effect()
+  createSprint$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.CREATE_SPRINT).pipe(
+      switchMap((action: CreateSprint) => this.authService.getUser().pipe(
+        mergeMap(user => this.dataService.addSprint(action.payload.project, action.payload.sprint, user)),
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err))))
+      )
+    );
 
   constructor(
     private actions$: Actions,
