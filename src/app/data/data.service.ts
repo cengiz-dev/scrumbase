@@ -9,7 +9,7 @@ import { User } from '../model/user.model';
 import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskUpdate } from '../model/task.model';
-import { Sprint } from '../model/sprint.model';
+import { Sprint, SprintUpdate } from '../model/sprint.model';
 
 class LocalData<T> {
     constructor(public updated: number, public data: T) { }
@@ -95,6 +95,12 @@ export abstract class DataService {
         return this.getTaskFromBackend(key);
     }
 
+    public getTasks(keys: string[]): Observable<Task[] | null> {
+        this.lastRefresh = 0;
+
+        return this.getTasksFromBackend(keys);
+    }
+
     public addTask(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
         this.lastRefresh = 0;
 
@@ -117,6 +123,24 @@ export abstract class DataService {
         this.lastRefresh = 0;
 
         return this.addSprintInBackend(project, sprint, user);
+    }
+
+    public updateSprint(project: ProjectRef, sprintIndex: number, updates: SprintUpdate, user: User): Observable<any> {
+        this.lastRefresh = 0;
+
+        return this.updateSprintInBackend(project, sprintIndex, updates, user);
+    }
+
+    public addTaskToSprint(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any> {
+        this.lastRefresh = 0;
+
+        return this.addTaskToSprintInBackend(project, taskKey, sprintIndex, user);
+    }
+
+    public removeTaskFromSprint(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any> {
+        this.lastRefresh = 0;
+
+        return this.removeTaskFromSprintInBackend(project, taskKey, sprintIndex, user);
     }
 
     private allowRefresh() {
@@ -144,6 +168,8 @@ export abstract class DataService {
 
     protected abstract getTaskFromBackend(key: string): Observable<Task | null>;
 
+    protected abstract getTasksFromBackend(keys: string[]): Observable<Task[] | null>;
+
     protected abstract addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any>;
 
     protected abstract updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
@@ -151,5 +177,11 @@ export abstract class DataService {
 
     protected abstract deleteTaskInBackend(project: ProjectRef, taskKey: string, user: User): Observable<any>;
 
-    protected abstract addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User);
+    protected abstract addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User): Observable<any>;
+
+    public abstract updateSprintInBackend(project: ProjectRef, sprintIndex: number, updates: SprintUpdate, user: User): Observable<any>;
+
+    protected abstract addTaskToSprintInBackend(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any>;
+
+    protected abstract removeTaskFromSprintInBackend(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any>;
 }

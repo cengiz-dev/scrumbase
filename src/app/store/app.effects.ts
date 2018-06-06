@@ -25,6 +25,11 @@ import {
   SetTask,
   DeleteTask,
   CreateSprint,
+  AddTaskToSprint,
+  GetTasks,
+  SetTasks,
+  UpdateSprint,
+  RemoveTaskFromSprint,
 } from './app.actions';
 import { AppState } from './app.state';
 import { AuthService } from '../auth/auth.service';
@@ -129,7 +134,13 @@ export class ProjectsEffects {
   getTask$: Observable<AllProjectsActions> = this.actions$
     .ofType(ProjectsActionType.GET_TASK).pipe(
       switchMap((action: GetTask) => this.dataService.getTask(action.payload)),
-      map(task => new SetTask(task)), );
+      map(task => new SetTask(task)));
+
+  @Effect()
+  getTasks$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.GET_TASKS).pipe(
+      switchMap((action: GetTasks) => this.dataService.getTasks(action.payload)),
+      map(tasks => new SetTasks(tasks)));
 
   @Effect()
   addTask$: Observable<AllProjectsActions> = this.actions$
@@ -182,6 +193,36 @@ export class ProjectsEffects {
     .ofType(ProjectsActionType.CREATE_SPRINT).pipe(
       switchMap((action: CreateSprint) => this.authService.getUser().pipe(
         mergeMap(user => this.dataService.addSprint(action.payload.project, action.payload.sprint, user)),
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err))))
+      )
+    );
+
+  @Effect()
+  updateSprint$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.UPDATE_SPRINT).pipe(
+      switchMap((action: UpdateSprint) => this.authService.getUser().pipe(
+        mergeMap(user => this.dataService.updateSprint(action.payload.project, action.payload.sprintIndex, action.payload.updates, user)),
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err))))
+      )
+    );
+
+  @Effect()
+  addTaskToSprint$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.ADD_TASK_TO_SPRINT).pipe(
+      switchMap((action: AddTaskToSprint) => this.authService.getUser().pipe(
+        mergeMap(user => this.dataService.addTaskToSprint(action.payload.project, action.payload.taskKey, action.payload.sprintIndex, user)),
+        map(() => new GetProjects()),
+        catchError(err => of(new BackendError(err))))
+      )
+    );
+
+  @Effect()
+  removeTaskFromSprint$: Observable<AllProjectsActions> = this.actions$
+    .ofType(ProjectsActionType.REMOVE_TASK_FROM_SPRINT).pipe(
+      switchMap((action: RemoveTaskFromSprint) => this.authService.getUser().pipe(
+        mergeMap(user => this.dataService.removeTaskFromSprint(action.payload.project, action.payload.taskKey, action.payload.sprintIndex, user)),
         map(() => new GetProjects()),
         catchError(err => of(new BackendError(err))))
       )

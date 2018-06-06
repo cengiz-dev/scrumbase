@@ -14,6 +14,7 @@ const initialState: ProjectsState = {
   projects: [],
   editMode: false,
   currentTask: undefined,
+  currentTasks: undefined,
   backendError: undefined,
 };
 
@@ -49,10 +50,26 @@ export function projectsReducer(state = initialState, action: AllProjectsActions
         ...state,
         currentTask: action.payload,
       };
+    case ProjectsActionType.GET_TASK:
+      return {
+        ...state,
+        currentTask: undefined,
+      };
+    case ProjectsActionType.SET_TASKS:
+      return {
+        ...state,
+        currentTasks: action.payload,
+      };
+    case ProjectsActionType.GET_TASKS:
+      return {
+        ...state,
+        currentTasks: undefined,
+      };
     case ProjectsActionType.UPDATE_PROJECT:
     case ProjectsActionType.UPDATE_EPIC:
     case ProjectsActionType.UPDATE_FEATURE:
     case ProjectsActionType.UPDATE_TASK:
+    case ProjectsActionType.UPDATE_SPRINT:
       return {
         ...state,
         editMode: false,

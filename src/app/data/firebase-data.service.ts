@@ -4,6 +4,7 @@ import { take, map, merge, mergeMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { database } from 'firebase';
+import { TransactionResult } from '@firebase/database/dist/src/api/TransactionResult';
 
 import { DataService } from './data.service';
 import { User } from '../model/user.model';
@@ -11,9 +12,8 @@ import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
 import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskSummary, task2TaskSummary, TaskUpdate, taskSummaryUpdatesFromTaskUpdate, TaskParent } from '../model/task.model';
-import { TransactionResult } from '@firebase/database/dist/src/api/TransactionResult';
 import { TaskStatus } from '../model/task-status.model';
-import { Sprint } from '../model/sprint.model';
+import { Sprint, SprintUpdate } from '../model/sprint.model';
 
 @Injectable()
 export class FirebaseDataService extends DataService {
@@ -129,6 +129,21 @@ export class FirebaseDataService extends DataService {
         });
       }),
       map(v => v && v.length > 0 ? v[0] : null), );
+  }
+
+  protected getTasksFromBackend(keys: Array<string>): Observable<Task[] | null> {
+    if (!keys) {
+      return new Observable<null>();
+    }
+    return Observable.combineLatest(keys.map(key => this.db.list(Task.COLLECTION_NAME, ref => ref.equalTo(null, key)).snapshotChanges().pipe(
+      map(actions => {
+        return !actions ? null : actions.map(a => {
+          const data = a.payload.val() as Task;
+          data.key = a.payload.key;
+          return data;
+        });
+      }),
+      map(v => v && v.length > 0 ? v[0] : null), )));
   }
 
   protected addTaskInBackend(project: ProjectRef, epicIndex: number, featureIndex: number, task: Task, user: User): Observable<any> {
@@ -356,14 +371,60 @@ export class FirebaseDataService extends DataService {
     return taskIndex;
   }
 
-  protected addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User) {
+  protected addSprintInBackend(project: ProjectRef, sprint: Sprint, user: User): Observable<any> {
     if (!project.sprints) {
       project.sprints = new Array<Sprint>();
     }
     sprint.createdOn = sprint.lastUpdatedOn = database.ServerValue.TIMESTAMP;
     sprint.createdBy = sprint.lastUpdatedBy = user;
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    let sprints = project.sprints ? [ ...project.sprints, sprint ] : [ sprint ];
-    return projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, sprints: sprints });
+    let sprints = project.sprints ? [...project.sprints, sprint] : [sprint];
+    return observableFrom(projects.update(project.key, { lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user, sprints: sprints }));
+  }
+
+  public updateSprintInBackend(project: ProjectRef, sprintIndex: number, updates: SprintUpdate, user: User): Observable<any> {
+    if (!project.sprints || sprintIndex >= project.sprints.length) {
+      throw { message: "Sprint index out of bounds. Can't update sprint." };
+    }
+    updates = {
+      ...updates,
+      lastUpdatedOn: database.ServerValue.TIMESTAMP,
+      lastUpdatedBy: user,
+    };
+    return observableFrom(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/sprints/${sprintIndex}`).update({ ...updates }));
+  }
+
+  protected addTaskToSprintInBackend(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any> {
+    if (!project.sprints || sprintIndex >= project.sprints.length) {
+      throw { message: "Sprint index out of bounds. Can't add task to sprint." };
+    }
+    let sprint = project.sprints[sprintIndex];
+    let updates = {
+      taskKeys: sprint.taskKeys ? [...sprint.taskKeys, taskKey] : [taskKey],
+      lastUpdatedOn: database.ServerValue.TIMESTAMP,
+      lastUpdatedBy: user,
+    };
+    return observableFrom(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/sprints/${sprintIndex}`).update({ ...updates }));
+  }
+
+  protected removeTaskFromSprintInBackend(project: ProjectRef, taskKey: string, sprintIndex: number, user: User): Observable<any> {
+    if (!project.sprints || sprintIndex >= project.sprints.length) {
+      throw { message: "Sprint index out of bounds. Can't remove task from sprint." };
+    }
+    let sprint = project.sprints[sprintIndex];
+    if (!sprint.taskKeys || sprint.taskKeys.length === 0) {
+      throw { message: "Sprint contains no tasks. Can't remove task from sprint." };
+    }
+    for (var i = sprint.taskKeys.length - 1; i >= 0; i--) {
+      if (sprint.taskKeys[i] === taskKey) {
+        sprint.taskKeys.splice(i, 1);
+      }
+    }
+    let updates = {
+      taskKeys: [...sprint.taskKeys],
+      lastUpdatedOn: database.ServerValue.TIMESTAMP,
+      lastUpdatedBy: user,
+    };
+    return observableFrom(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/sprints/${sprintIndex}`).update({ ...updates }));
   }
 }

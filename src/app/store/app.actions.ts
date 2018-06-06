@@ -4,7 +4,7 @@ import { Project, ProjectRef, ProjectUpdate } from '../model/project.model';
 import { Epic, EpicUpdate } from '../model/epic.model';
 import { Feature, FeatureUpdate } from '../model/feature.model';
 import { Task, TaskUpdate } from '../model/task.model';
-import { Sprint } from '../model/sprint.model';
+import { Sprint, SprintUpdate } from '../model/sprint.model';
 
 export enum ProjectsActionType {
   SET_PROJECTS = 'SET_PROJECTS',
@@ -18,10 +18,15 @@ export enum ProjectsActionType {
   UPDATE_FEATURE = 'UPDATE_FEATURE',
   SET_TASK = 'SET_TASK',
   GET_TASK = 'GET_TASK',
+  SET_TASKS = 'SET_TASKS',
+  GET_TASKS = 'GET_TASKS',
   ADD_TASK = 'ADD_TASK',
   UPDATE_TASK = 'UPDATE_TASK',
   DELETE_TASK = 'DELETE_TASK',
   CREATE_SPRINT = 'CREATE_SPRINT',
+  UPDATE_SPRINT = 'UPDATE_SPRINT',
+  ADD_TASK_TO_SPRINT = 'ADD_TASK_TO_SPRINT',
+  REMOVE_TASK_FROM_SPRINT = "REMOVE_TASK_FROM_SPRINT",
   SWITCH_EDIT_MODE = 'SWITCH_EDIT_MODE',
   BACKEND_ERROR = 'BACKEND_ERROR',
   DIALOG_CLOSED = 'DIALOG_CLOSED',
@@ -94,6 +99,18 @@ export class GetTask implements Action {
   constructor(public payload: string) {}
 }
 
+export class SetTasks implements Action {
+  readonly type = ProjectsActionType.SET_TASKS;
+
+  constructor(public payload: Task[]) {}
+}
+
+export class GetTasks implements Action {
+  readonly type = ProjectsActionType.GET_TASKS;
+
+  constructor(public payload: string[]) {}
+}
+
 export class AddTask implements Action {
   readonly type = ProjectsActionType.ADD_TASK;
 
@@ -116,6 +133,24 @@ export class CreateSprint implements Action {
   readonly type = ProjectsActionType.CREATE_SPRINT;
 
   constructor(public payload: { project: ProjectRef, sprint: Sprint }) {}
+}
+
+export class UpdateSprint implements Action {
+  readonly type = ProjectsActionType.UPDATE_SPRINT;
+
+  constructor(public payload: { project: ProjectRef, sprintIndex: number, updates: SprintUpdate }) {}
+}
+
+export class AddTaskToSprint implements Action {
+  readonly type = ProjectsActionType.ADD_TASK_TO_SPRINT;
+
+  constructor(public payload: { project: ProjectRef, taskKey: string, sprintIndex: number }) {}
+}
+
+export class RemoveTaskFromSprint implements Action {
+  readonly type = ProjectsActionType.REMOVE_TASK_FROM_SPRINT;
+
+  constructor(public payload: { project: ProjectRef, taskKey: string, sprintIndex: number }) {}
 }
 
 export class SwitchEditMode implements Action {
@@ -154,10 +189,15 @@ export type AllProjectsActions =
   UpdateFeature |
   SetTask |
   GetTask |
+  SetTasks |
+  GetTasks |
   AddTask |
   UpdateTask |
   DeleteTask |
   CreateSprint |
+  UpdateSprint |
+  AddTaskToSprint |
+  RemoveTaskFromSprint |
   SwitchEditMode |
   BackendError |
   DialogClosed |

@@ -7,6 +7,7 @@ import { Project, ProjectRef } from "../model/project.model";
 import { Task, TaskSummary } from "../model/task.model";
 import { Feature } from "../model/feature.model";
 import { Epic } from "../model/epic.model";
+import { Sprint } from "../model/sprint.model";
 
 export const getRouterState =
     createFeatureSelector<RouterReducerState<RouterStateUrl>>('router');
@@ -41,6 +42,11 @@ export const getCurrentTask = createSelector(
     (state: ProjectsState): Task => state.currentTask,
 );
 
+export const getCurrentTasks = createSelector(
+    getProjectsState,
+    (state: ProjectsState): TaskSummary[] => state.currentTasks,
+);
+
 export const getRouteParams = createSelector(
     getRouterState,
     (routerState: RouterReducerState<RouterStateUrl>): Params => routerState.state.params
@@ -73,6 +79,25 @@ export const getSelectedEpic = createSelector(
                 let epicIndex: number = routerState.state.params.epicIndex;
                 if (project.epics && epicIndex < project.epics.length) {
                     result = project.epics[epicIndex];
+                }
+            }
+        }
+        return result;
+    }
+);
+
+export const getSelectedSprint = createSelector(
+    getProjects,
+    getRouterState,
+    (projects: ProjectRef[], routerState: RouterReducerState<RouterStateUrl>): Sprint => {
+        let result: Sprint;
+        if (routerState) {
+            let index: number = routerState.state.params.index;
+            if (index < projects.length) {
+                let project = projects[index];
+                let sprintIndex: number = routerState.state.params.sprintIndex;
+                if (project.sprints && sprintIndex < project.sprints.length) {
+                    result = project.sprints[sprintIndex];
                 }
             }
         }

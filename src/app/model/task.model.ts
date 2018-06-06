@@ -6,8 +6,11 @@ import { User } from "./user.model";
 export class TaskSummary {
     public key: string;
     public identifier: string;  // unique identifier ie: FEA-1
+    public parent: TaskParent;
     public type: TaskType;
     public status: TaskStatus;
+    public points: number;
+    public priority: TaskPriority;
     public lastUpdatedOn: any;
     public lastUpdatedBy: User;
 
@@ -23,10 +26,6 @@ export interface TaskParent {
 export class Task extends TaskSummary {
     public static COLLECTION_NAME = 'tasks';
     public static SEQUENCE_COLLECTION_NAME = Task.COLLECTION_NAME + '/seq';
-    
-    public parent: TaskParent;
-    public points: number;
-    public priority: TaskPriority;
     public description: string;
     public createdOn: any;
     public createdBy: User;
@@ -34,7 +33,6 @@ export class Task extends TaskSummary {
     // TODO:
     // assignedTo
     // subTasks ?
-    // sprints ?
 
     constructor(title: string) {
         super(title);
@@ -60,8 +58,11 @@ export function task2TaskSummary(task: Task): TaskSummary {
     let result: TaskSummary = new TaskSummary(task.title);
     if (task.key) result.key = task.key;
     if (task.identifier) result.identifier = task.identifier;
+    if (task.parent) result.parent = { ...task.parent };
     if (task.type) result.type = task.type;
     if (task.status) result.status = task.status;
+    if (task.points) result.points = task.points;
+    if (task.priority) result.priority = task.priority;
     if (task.lastUpdatedOn) result.lastUpdatedOn = task.lastUpdatedOn;
     if (task.lastUpdatedBy) result.lastUpdatedBy = task.lastUpdatedBy;
     return result;

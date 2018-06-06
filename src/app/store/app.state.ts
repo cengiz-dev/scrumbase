@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot, Params } from '@angular/ro
 import { RouterReducerState, RouterStateSerializer } from '@ngrx/router-store';
 
 import { Project } from '../model/project.model';
-import { Task } from '../model/task.model';
+import { Task, TaskSummary } from '../model/task.model';
 
 export interface AppUrlSegment {
     name: string;
@@ -20,6 +20,7 @@ export interface ProjectsState {
     projects: Project[],
     editMode: boolean,
     currentTask: Task,
+    currentTasks: TaskSummary[],
     backendError: { code: string, message: string },
 }
 

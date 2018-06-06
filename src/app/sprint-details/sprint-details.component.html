@@ -1,3 +1,120 @@
-<p>
-  sprint-details works!
-</p>
+<ng-container *ngIf="(viewState$ | async) as viewState">
+  <ng-container *ngIf="(routeParams$ | async) as routeParams">
+    <ng-container *ngIf="(currentProject$ | async) as currentProject">
+      <ng-container *ngIf="(currentSprint$ | async) as currentSprint">
+        <form *ngIf="viewState.editMode;else viewMode" (ngSubmit)="onSaveSprint(f, currentProject, routeParams.sprintIndex, currentSprint)" #f="ngForm">
+          <mat-form-field>
+            <mat-label>title</mat-label>
+            <input matInput required name="title" placeholder="title" [ngModel]="currentSprint.title">
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput [matDatepicker]="pickerStart" placeholder="Choose a start date" [ngModel]="currentSprint.startTime" name="startTime">
+            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+          </mat-form-field>
+  
+          <mat-form-field>
+            <input matInput [matDatepicker]="pickerEnd" placeholder="Choose an end date" [ngModel]="currentSprint.endTime" name="endTime">
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+          </mat-form-field>
+          <div>
+            <button mat-raised-button color="primary" type="submit">Save</button>
+            <button mat-raised-button color="primary" (click)="onCancelEditSprint()">Cancel</button>
+          </div>
+        </form>
+        <ng-template #viewMode>
+          <div class="data-line">
+            <span class="data data-label">title:</span>
+            &nbsp;
+            <span class="data data-value">{{ currentSprint?.title }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">from:</span>
+            <span class="data data-value">{{ currentSprint?.startTime | date:'d-MMM-yyyy' }}</span>
+            <span class="data data-label"> to: </span>
+            <span class="data data-value">{{ currentSprint?.endTime | date:'d-MMM-yyyy' }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">created on:</span>
+            <span class="data data-value">{{ currentSprint?.createdOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentSprint?.createdBy.displayName }}</span>
+          </div>
+          <div class="data-line">
+            <span class="data data-label">last updated on:</span>
+            <span class="data data-value">{{ currentSprint?.lastUpdatedOn | date:'d-MMM-yyyy H:mm:ss' }}</span>
+            <span class="data data-label">by:</span>
+            <span class="data data-value">{{ currentSprint?.lastUpdatedBy.displayName }}</span>
+          </div>
+          <button mat-raised-button color="primary" (click)="onEditSprint(currentSprint)">Edit</button>
+        </ng-template>
+
+        <mat-list>
+          <h3 mat-subheader>Sprint Tasks
+            <span class="fill-remaining-space"></span>
+          </h3>
+          <ng-container *ngIf="(currentTasks$ | async) as currentTasks">
+            <ng-container *ngFor="let task of currentTasks; let taskIndex = index">
+              <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, task, taskIndex)">
+                <mat-icon mat-list-icon>folder</mat-icon>
+                <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+                <span class="fill-remaining-space"></span>
+                <button mat-icon-button color="primary" title="remove from sprint" (click)="onRemoveTask($event, currentProject, task.key, routeParams.sprintIndex)">
+                  <mat-icon aria-label="Remove task button">remove</mat-icon>
+                </button>
+              </mat-list-item>
+            </ng-container>
+          </ng-container>
+          <mat-expansion-panel (opened)="addTaskPanelOpenState = true" (closed)="addTaskPanelOpenState = false" [expanded]="addTaskPanelOpenState">
+            <mat-expansion-panel-header>
+              Add Tasks To Sprint
+            </mat-expansion-panel-header>
+            <mat-panel-description *ngIf="addTaskPanelOpenState">
+              Please click the add button to add a task to this sprint.
+            </mat-panel-description>
+            <h3 mat-subheader>All Project Tasks
+              <span class="fill-remaining-space"></span>
+              <mat-checkbox [(ngModel)]="showDeletedTasks">Show deleted tasks</mat-checkbox>
+            </h3>
+            <ng-container *ngFor="let task of currentProject.tasks; let taskIndex = index">
+              <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+                <mat-icon mat-list-icon>folder</mat-icon>
+                <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+                <span class="fill-remaining-space"></span>
+                <button mat-icon-button color="primary" title="add to sprint" (click)="onAddTask($event, currentProject, task.key, routeParams.sprintIndex)">
+                  <mat-icon aria-label="Add task button">add</mat-icon>
+                </button>
+              </mat-list-item>
+            </ng-container>
+            <ng-container *ngFor="let task of currentProject.epics; let epicIndex = index">
+              <ng-container *ngFor="let task of currentProject.epics[epicIndex].tasks; let taskIndex = index">
+                <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+                  <mat-icon mat-list-icon>folder</mat-icon>
+                  <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+                  <span class="fill-remaining-space"></span>
+                  <button mat-icon-button color="primary" title="add to sprint" (click)="onAddTask($event, currentProject, task.key, routeParams.sprintIndex)">
+                    <mat-icon aria-label="Add task button">add</mat-icon>
+                  </button>
+                </mat-list-item>
+              </ng-container>
+              <ng-container *ngFor="let task of currentProject.epics[epicIndex].features; let featureIndex = index">
+                <ng-container *ngFor="let task of currentProject.epics[epicIndex].features[featureIndex].tasks; let taskIndex = index">
+                  <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+                    <mat-icon mat-list-icon>folder</mat-icon>
+                    <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+                    <span class="fill-remaining-space"></span>
+                    <button mat-icon-button color="primary" title="add to sprint" (click)="onAddTask($event, currentProject, task.key, routeParams.sprintIndex)">
+                      <mat-icon aria-label="Add task button">add</mat-icon>
+                    </button>
+                  </mat-list-item>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </mat-expansion-panel>
+        </mat-list>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
