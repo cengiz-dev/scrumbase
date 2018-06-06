@@ -11,6 +11,7 @@ import * as ProjectsActions from '../store/app.actions';
 import { Sprint, SprintUpdate } from '../model/sprint.model';
 import { ProjectRef } from '../model/project.model';
 import { TaskSummary } from '../model/task.model';
+import { TaskNavigationService } from '../shared/task-navigation.service';
 
 @Component({
   selector: 'app-sprint-details',
@@ -26,7 +27,7 @@ export class SprintDetailsComponent implements OnInit {
   addTaskPanelOpenState: boolean = false;
   showDeletedTasks = false;
 
-  constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute, private taskNavigationService: TaskNavigationService) {
     this.viewState$ = this.store.select(getProjectsState);
     this.routeParams$ = this.store.select(getRouteParams);
     this.currentProject$ = this.store.select(getSelectedProject);
@@ -74,16 +75,11 @@ export class SprintDetailsComponent implements OnInit {
     this.store.dispatch(new ProjectsActions.RemoveTaskFromSprint({ project, taskKey, sprintIndex }));
   }
 
+  onSprintTaskSelected(project: ProjectRef, projectIndex: number, taskSummary: TaskSummary) {
+    this.taskNavigationService.navigateWithoutTaskIndex(project, projectIndex, taskSummary);
+  }
+
   onTaskSelected(projectIndex: number, taskSummary: TaskSummary, taskIndex: number) {
-    let target: Array<string> = ['project', projectIndex.toString()];
-    let taskParent = taskSummary.parent;
-    if (taskParent.epicIndex == 0 || taskParent.epicIndex) {
-      target.push('epic', taskParent.epicIndex.toString());
-      if (taskParent.featureIndex == 0 || taskParent.featureIndex) {
-        target.push('feature', taskParent.featureIndex.toString());
-      }
-    }
-    target.push('task', taskIndex.toString());
-    this.router.navigate(target);
+    this.taskNavigationService.navigate(projectIndex, taskSummary, taskIndex);
   }
 }

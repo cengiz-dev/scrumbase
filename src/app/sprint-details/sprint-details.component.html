@@ -57,7 +57,7 @@
           </h3>
           <ng-container *ngIf="(currentTasks$ | async) as currentTasks">
             <ng-container *ngFor="let task of currentTasks; let taskIndex = index">
-              <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, task, taskIndex)">
+              <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onSprintTaskSelected(currentProject, routeParams.index, task)">
                 <mat-icon mat-list-icon>folder</mat-icon>
                 <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
                 <span class="fill-remaining-space"></span>
@@ -79,7 +79,7 @@
               <mat-checkbox [(ngModel)]="showDeletedTasks">Show deleted tasks</mat-checkbox>
             </h3>
             <ng-container *ngFor="let task of currentProject.tasks; let taskIndex = index">
-              <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+              <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task, taskIndex)">
                 <mat-icon mat-list-icon>folder</mat-icon>
                 <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
                 <span class="fill-remaining-space"></span>
@@ -90,7 +90,7 @@
             </ng-container>
             <ng-container *ngFor="let task of currentProject.epics; let epicIndex = index">
               <ng-container *ngFor="let task of currentProject.epics[epicIndex].tasks; let taskIndex = index">
-                <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+                <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task, taskIndex)">
                   <mat-icon mat-list-icon>folder</mat-icon>
                   <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
                   <span class="fill-remaining-space"></span>
@@ -101,7 +101,7 @@
               </ng-container>
               <ng-container *ngFor="let task of currentProject.epics[epicIndex].features; let featureIndex = index">
                 <ng-container *ngFor="let task of currentProject.epics[epicIndex].features[featureIndex].tasks; let taskIndex = index">
-                  <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task)">
+                  <mat-list-item *ngIf="(task.status != 'DELETED' || showDeletedTasks) && (!currentSprint.taskKeys || !currentSprint.taskKeys.includes(task.key))" (click)="onTaskSelected(routeParams.index, task, taskIndex)">
                     <mat-icon mat-list-icon>folder</mat-icon>
                     <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
                     <span class="fill-remaining-space"></span>

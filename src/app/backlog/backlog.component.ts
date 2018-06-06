@@ -8,7 +8,8 @@ import { ProjectsState, AppState } from '../store/app.state';
 import * as ProjectsActions from '../store/app.actions';
 import { getProjectsState, getRouteParams, getSelectedProject } from '../store/app.selectors';
 import { ProjectRef } from '../model/project.model';
-import { Task } from '../model/task.model';
+import { Task, TaskSummary } from '../model/task.model';
+import { TaskNavigationService } from '../shared/task-navigation.service';
 
 @Component({
   selector: 'app-backlog',
@@ -23,7 +24,7 @@ export class BacklogComponent implements OnInit {
   addedTask = new Task('');
   showDeletedTasks = false;
 
-  constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private store: Store<AppState>, private router: Router, private activatedRoute: ActivatedRoute, private taskNavigationService: TaskNavigationService) {
     this.store.dispatch(new ProjectsActions.GetProjects());
     this.viewState$ = this.store.select(getProjectsState);
     this.routeParams$ = this.store.select(getRouteParams);
@@ -40,8 +41,8 @@ export class BacklogComponent implements OnInit {
     this.addTaskPanelOpenState = false;
   }
 
-  onTaskSelected(projectIndex: number, taskIndex: number) {
-    this.router.navigate(['project', projectIndex, 'task', taskIndex]);
+  onTaskSelected(projectIndex: number, taskSummary: TaskSummary, taskIndex: number) {
+    this.taskNavigationService.navigate(projectIndex, taskSummary, taskIndex);
   }
 
   onTaskDeleted(event: any, project: ProjectRef, taskKey: string) {
