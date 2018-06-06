@@ -8,7 +8,7 @@
       <ng-container *ngFor="let task of currentProject.tasks; let taskIndex = index">
         <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, taskIndex)">
           <mat-icon mat-list-icon>folder</mat-icon>
-          <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+          <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}<span *ngIf="task.points" class="task-points"> - ({{task.points}} points)</span></h4>
           <span class="fill-remaining-space"></span>
           <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'" (click)="onTaskDeleted($event, currentProject, task.key)">
             <mat-icon aria-label="Delete task button">delete</mat-icon>
@@ -19,7 +19,7 @@
         <ng-container *ngFor="let task of currentProject.epics[epicIndex].tasks; let taskIndex = index">
           <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, taskIndex)">
             <mat-icon mat-list-icon>folder</mat-icon>
-            <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+            <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}<span *ngIf="task.points" class="task-points"> - ({{task.points}} points)</span></h4>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'" (click)="onTaskDeleted($event, currentProject, task.key)">
               <mat-icon aria-label="Delete task button">delete</mat-icon>
@@ -30,7 +30,7 @@
           <ng-container *ngFor="let task of currentProject.epics[epicIndex].features[featureIndex].tasks; let taskIndex = index">
             <mat-list-item *ngIf="task.status != 'DELETED' || showDeletedTasks" (click)="onTaskSelected(routeParams.index, taskIndex)">
               <mat-icon mat-list-icon>folder</mat-icon>
-              <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}</h4>
+              <h4 mat-line [ngClass]="{'deleted-item-text': task.status == 'DELETED'}">Title: {{task.title}}<span *ngIf="task.points" class="task-points"> - ({{task.points}} points)</span></h4>
               <span class="fill-remaining-space"></span>
               <button mat-icon-button color="primary" title="delete task" [disabled]="task.status == 'DELETED'" (click)="onTaskDeleted($event, currentProject, task.key)">
                 <mat-icon aria-label="Delete task button">delete</mat-icon>

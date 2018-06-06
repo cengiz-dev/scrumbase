@@ -237,6 +237,11 @@ export class FirebaseDataService extends DataService {
 
   protected updateTaskInBackend(project: ProjectRef, taskKey: string, updatedTask: TaskUpdate, epicIndex: number, featureIndex: number,
     taskIndex: number, user: User): Observable<any> {
+    updatedTask = {
+      ...updatedTask,
+      lastUpdatedOn: database.ServerValue.TIMESTAMP,
+      lastUpdatedBy: user,
+    };
     if (epicIndex != 0 && !epicIndex) {
       return this.updateProjectTask(project, taskKey, updatedTask, taskIndex, user);
     } else {
@@ -261,7 +266,7 @@ export class FirebaseDataService extends DataService {
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+    return observableFrom(tasks.update(taskKey, { ...updatedTask })).pipe(
       merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/features/${featureIndex}/tasks/${taskIndex}`)
         .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
     );
@@ -273,7 +278,7 @@ export class FirebaseDataService extends DataService {
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+    return observableFrom(tasks.update(taskKey, { ...updatedTask })).pipe(
       merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/epics/${epicIndex}/tasks/${taskIndex}`)
         .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
     );
@@ -285,7 +290,7 @@ export class FirebaseDataService extends DataService {
     }
     const tasks = this.db.list(Task.COLLECTION_NAME);
     const projects = this.db.list(ProjectRef.COLLECTION_NAME);
-    return observableFrom(tasks.update(taskKey, { ...updatedTask, lastUpdatedOn: database.ServerValue.TIMESTAMP, lastUpdatedBy: user })).pipe(
+    return observableFrom(tasks.update(taskKey, { ...updatedTask })).pipe(
       merge(this.db.object(`${ProjectRef.COLLECTION_NAME}/${project.key}/tasks/${taskIndex}`)
         .update({ ...taskSummaryUpdatesFromTaskUpdate(updatedTask) }))
     );

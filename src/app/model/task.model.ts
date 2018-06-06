@@ -52,6 +52,8 @@ export interface TaskUpdate {
     points?: number;
     priority?: TaskPriority;
     description?: string;
+    lastUpdatedOn?: any;
+    lastUpdatedBy?: User;
 }
 
 export function task2TaskSummary(task: Task): TaskSummary {
@@ -73,5 +75,9 @@ export function taskSummaryUpdatesFromTaskUpdate(taskUpdate: TaskUpdate): any {
     if (taskUpdate.title) result.title = taskUpdate.title;
     if (taskUpdate.type) result.type = taskUpdate.type;
     if (taskUpdate.status) result.status = taskUpdate.status;
+    if (taskUpdate.points) result.points = taskUpdate.points;
+    if (taskUpdate.priority) result.priority = taskUpdate.priority;
+    if (taskUpdate.lastUpdatedOn) result.lastUpdatedOn = taskUpdate.lastUpdatedOn;
+    if (taskUpdate.lastUpdatedBy) result.lastUpdatedBy = taskUpdate.lastUpdatedBy;
     return result;
 }
